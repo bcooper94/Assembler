@@ -1,24 +1,30 @@
 import java.io.FileReader;
 import java.io.File;
+import java.io.PrintWriter;
 
 public class Driver {
    
    public static void main(String args[]) {
    
       try {
-         File file = new File("test1.asm");
+         File file = new File("test2.asm");
          Parser parser = new Parser();
          
-         //pass 1 = labels
+         //pass 1 = labelsB
          FileReader symRdr = new FileReader(file);
-         parser.parseLabels(symRdr);
+         SymbolTable symTab = parser.parseLabels(symRdr);
          symRdr.close();
+         
+         Instruction.useSymbolTable(symTab);
          
          //pass 2 = instructions
          FileReader instRdr = new FileReader(file);
-         parser.parseInstructions(instRdr);
+         Program program =parser.parseInstructions(instRdr);
          instRdr.close();
-               
+         
+         
+         PrintWriter writer = new PrintWriter(System.out);
+         program.writeObjFileBinString(writer);
       }
       catch (Exception e)
       {

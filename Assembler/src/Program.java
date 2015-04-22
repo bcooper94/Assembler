@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.nio.ByteBuffer;
@@ -31,6 +32,17 @@ public class Program {
         }
         catch (IOException except) {
             System.err.println("Unable to write buffer.");
+        }
+    }
+    
+    public void writeObjFileBinString(PrintWriter write) {
+        try {
+            for (Instruction instruct : instructions) {
+                write.print(Integer.toBinaryString(instruct.getinstructCode()));
+            }
+        }
+        catch (Exception except) {
+            System.err.println("Unable to print line.");
         }
     }
 }

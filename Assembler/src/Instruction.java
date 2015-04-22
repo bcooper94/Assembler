@@ -138,11 +138,6 @@ public class Instruction {
         int InstructCode = 0;
            
         if(operations.containsKey(instructionName)) {
-         
-           //instruction name starts with j its a jump
-           //check if instruct code larger hex FF, its an immediate
-           //otherwise its a register
-           
            currOperation = operations.get(instructionName);
            InstructCode |= currOperation.getOpValue();
            

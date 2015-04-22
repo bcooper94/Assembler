@@ -1,4 +1,6 @@
-
+/**
+ * Represent each supported operation with its func/op code and instruction mode.
+ */
 public enum Operation {
     AND(0x24, InstructType.REGISTER),
     OR(0x25, InstructType.REGISTER),
@@ -27,10 +29,16 @@ public enum Operation {
         this.type = type;
     }
     
+    /**
+     * Get the operation's func and op value.
+     */
     public int getOpValue() {
         return this.opValue;
     }
     
+    /**
+     * Get the type of instruction.
+     */
     public InstructType getType() {
         return this.type;
     }

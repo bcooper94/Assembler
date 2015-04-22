@@ -1,5 +1,8 @@
 import java.util.HashMap;
 
+/**
+ * Represent an assembler's symbol table.
+ */
 public class SymbolTable {
     private HashMap<String, Integer> table;
     
@@ -14,6 +17,9 @@ public class SymbolTable {
         return table.get(label);
     }
 
+    /**
+     * Add a single symbol to the table.
+     */
     public void addLabel(String label, int lineNum) {
         table.put(label, lineNum * 4);
     }

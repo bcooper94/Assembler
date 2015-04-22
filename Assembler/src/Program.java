@@ -7,6 +7,9 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represent an assembly program.
+ */
 public class Program {
     private List<Instruction> instructions;
     
@@ -18,6 +21,9 @@ public class Program {
         instructions.add(inst);
     }
     
+    /**
+     * Write the actual binary assembly code to a stream.
+     */
     public void writeObjectFile(OutputStream stream) {
         byte[] toWrite;
         ByteBuffer buffer;
@@ -35,10 +41,13 @@ public class Program {
         }
     }
     
+    /**
+     * Write a binary string representation of the assembly program.
+     */
     public void writeObjFileBinString(PrintWriter write) {
         try {
             for (Instruction instruct : instructions) {
-                write.print(Integer.toBinaryString(instruct.getinstructCode()));
+                write.println(Integer.toBinaryString(instruct.getinstructCode()));
             }
         }
         catch (Exception except) {

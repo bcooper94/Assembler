@@ -2,11 +2,18 @@ import java.io.Reader;
 import java.util.Scanner;
 import java.io.File;
 
+/**
+ * Create a file parser to read through assembly code in two passes.
+ */
 public class Parser {
 
    public Parser() {
+       
    }
    
+   /**
+    * Create the symbol table from a file.
+    */
    public SymbolTable parseLabels(Reader rdr) {
       String line;
       int lineNum = 0;
@@ -37,6 +44,9 @@ public class Parser {
       return symTab;
    }
    
+   /**
+    * Create the Program from a file.
+    */
    public Program parseInstructions(Reader rdr) {
       int lineNum = 0;
       String line;

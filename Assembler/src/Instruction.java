@@ -2,7 +2,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
-
+/**
+ * Represent a single assembly instruction.
+ */
 public class Instruction {
     private int instructCode;
     private static final HashMap<String, Operation> operations;
@@ -98,14 +100,23 @@ public class Instruction {
         registers.put("$31", 31);
     }
     
+    /**
+     * Create an instruction from a line of assembly code and its line number.
+     */
     public Instruction(String sourceLine, int lineNum) {
         instructCode = parseInstruction(sourceLine, lineNum);
     }
     
+    /**
+     * Create an instruction from a binary assembly code.
+     */
     public Instruction(int code) {
         this.instructCode = code;
     }
     
+    /**
+     * Set the Instruction class to use a specific SymbolTable.
+     */
     public static void useSymbolTable(SymbolTable symTab) {
          Instruction.symbolTable = symTab;
     }
@@ -114,6 +125,9 @@ public class Instruction {
         return instructCode;
     }
     
+    /**
+     * Test if a line of assembly code is an instruction. Used to see if PC needs to be incremented.
+     */
     public static boolean isInstruction(String line) {
         boolean isInstruct = false;
         Set<String> keySet = operations.keySet();
@@ -126,6 +140,9 @@ public class Instruction {
         return isInstruct;
     }
     
+    /**
+     * Parse a single line of assembly code, returning the binary code as an int.
+     */
     private int parseInstruction(String line, int lineNum) {
         String formatted = line.split("#")[0].trim();
         int[] registers = {0, 0, 0};
@@ -162,6 +179,9 @@ public class Instruction {
         return 0;
     }
 
+    /**
+     * Create the binary representation of a register mode instruction.
+     */
     public static int regInstruction(Operation currOperation, String rd, String rs, String rt) {
         int bits = currOperation.getOpValue();
 
@@ -172,6 +192,9 @@ public class Instruction {
         return bits;
     }
 
+    /**
+     * Create the binary representation of an immediate mode instruction.
+     */
     public static int immedInstruction(Operation currOperation, String rt, String rs, String immed) {
         int bits =  currOperation.getOpValue();
 
@@ -182,6 +205,9 @@ public class Instruction {
         return bits;
     }
 
+    /**
+     * Create the binary representation of a jump instruction.
+     */
     public static int jumpInstruction(Operation currOperation, String address) {
         int bits = currOperation.getOpValue();
         

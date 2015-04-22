@@ -2,6 +2,9 @@ import java.io.FileReader;
 import java.io.File;
 import java.io.PrintWriter;
 
+/**
+ * A driver for the assembler program.
+ */
 public class Driver {
    
    public static void main(String args[]) {

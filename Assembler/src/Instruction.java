@@ -1,6 +1,7 @@
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * Represent a single assembly instruction.
@@ -10,11 +11,11 @@ public class Instruction {
     private static final HashMap<String, Operation> operations;
     private static final HashMap<String, Integer> registers;
     private static SymbolTable symbolTable;
-    
+
     static { // Initialize operation and register mappings
         operations = new HashMap<String, Operation>(18);
         registers = new HashMap<String, Integer>();
-        
+
         operations.put("and", Operation.ADD);
         operations.put("or", Operation.OR);
         operations.put("add", Operation.ADD);
@@ -33,7 +34,7 @@ public class Instruction {
         operations.put("j", Operation.J);
         operations.put("jr", Operation.JR);
         operations.put("jal", Operation.JAL);
-        
+
         registers.put("$zero", 0);
         registers.put("$0", 0);
         registers.put("$at", 1);
@@ -99,32 +100,32 @@ public class Instruction {
         registers.put("$ra", 31);
         registers.put("$31", 31);
     }
-    
+
     /**
      * Create an instruction from a line of assembly code and its line number.
      */
     public Instruction(String sourceLine, int lineNum) {
         instructCode = parseInstruction(sourceLine, lineNum);
     }
-    
+
     /**
      * Create an instruction from a binary assembly code.
      */
     public Instruction(int code) {
         this.instructCode = code;
     }
-    
+
     /**
      * Set the Instruction class to use a specific SymbolTable.
      */
     public static void useSymbolTable(SymbolTable symTab) {
-         Instruction.symbolTable = symTab;
+        Instruction.symbolTable = symTab;
     }
-    
+
     public int getinstructCode() {
         return instructCode;
     }
-    
+
     /**
      * Test if a line of assembly code is an instruction. Used to see if PC needs to be incremented.
      * @param line  A full line in the assembly file.
@@ -141,7 +142,7 @@ public class Instruction {
 
         return isInstruct;
     }
-    
+
     /**
      * Parse a single line of assembly code, returning the binary code as an int.
      * @param line   A full line in the assembly file.
@@ -149,39 +150,51 @@ public class Instruction {
      * @return the instruction code created from the line.
      */
     private int parseInstruction(String line, int lineNum) {
+        String[] arrNotation;
         String formatted = line.split("#")[0].trim();
-        int[] registers = {0, 0, 0};
-        
         String[] arguments = formatted.split(",");
         arguments[0] = arguments[0].split("\\s+")[1];
         String instructionName = formatted.split("\\s+")[0].trim();
-
         Operation currOperation;
-        int InstructCode = 0;
-           
+        int instructCode = 0;
+
         if(operations.containsKey(instructionName)) {
-           currOperation = operations.get(instructionName);
-           InstructCode |= currOperation.getOpValue();
-           
-           for(int ndx = 0; ndx < arguments.length; ndx++) {
-              arguments[ndx] = arguments[ndx].trim();
-           }
-           
-          // System.out.print(instructionName);
-          // System.out.print(Arrays.toString(arguments));
-           
-           if(currOperation.getType() == InstructType.REGISTER) {
-              regInstruction(currOperation, arguments[0], arguments[1], arguments[2]);
-           }
-           else if(currOperation.getType() == InstructType.IMMEDIATE) {
-              immedInstruction(currOperation, arguments[0], arguments[1], arguments[2]);
-           }
-           else if(currOperation.getType() == InstructType.JUMP){
-              jumpInstruction(currOperation, arguments[0]);
-           }
+            currOperation = operations.get(instructionName);
+            instructCode |= currOperation.getOpValue();
+
+            for(int ndx = 0; ndx < arguments.length; ndx++) {
+                arguments[ndx] = arguments[ndx].trim();
+            }
+
+            // System.out.print(instructionName);
+            // System.out.print(Arrays.toString(arguments));
+
+            if(currOperation.getType() == InstructType.REGISTER) {
+                instructCode |= regInstruction(
+                        currOperation, arguments[0], arguments[1], arguments[2]);
+            }
+            else if(currOperation.getType() == InstructType.IMMEDIATE) {
+                // If instruct is using array notation
+                if (arguments[1].contains("(") && arguments[1].contains(")")) {
+                    System.err.println(arguments[1]);
+                    arrNotation = arguments[1].split("\\(");
+                    arrNotation[1] = arrNotation[1].substring(0, arrNotation[1].length() - 1);
+                    System.out.println("ArrNotation[0] " + arrNotation[0]);
+                    System.out.println("ArrNotation[1] " + arrNotation[1]);
+                    instructCode |= immedInstruction(
+                            currOperation, arguments[0], arrNotation[1], Integer.parseInt(arrNotation[0]));
+                }
+                else {
+                    instructCode |= immedInstruction(
+                            currOperation, arguments[0], arguments[1], arguments[2]);
+                }
+            }
+            else if(currOperation.getType() == InstructType.JUMP){
+                instructCode |= jumpInstruction(currOperation, arguments[0]);
+            }
         }
 
-        return 0;
+        return instructCode;
     }
 
     /**
@@ -192,7 +205,8 @@ public class Instruction {
      * @param rt   Rt register.
      * @return instruction code for a register type instruction.
      */
-    public static int regInstruction(Operation currOperation, String rd, String rs, String rt) {
+    public static int regInstruction(
+            Operation currOperation, String rd, String rs, String rt) {
         int bits = currOperation.getOpValue();
 
         bits |= registers.get(rd) << 11;
@@ -213,7 +227,26 @@ public class Instruction {
     public static int immedInstruction(Operation currOperation, String rt, String rs, String immed) {
         int bits =  currOperation.getOpValue();
 
-        bits |= symbolTable.getOffset(immed) == 0 ? Integer.parseInt(immed) << 2 : symbolTable.getOffset(immed);
+        bits |= symbolTable.getOffset(immed);            
+        bits |= Integer.parseInt(immed);
+        bits |= registers.get(rs) << 21;
+        bits |= registers.get(rt) << 16;
+
+        return bits;
+    }
+
+    /**
+     * Create the binary representation of an immediate mode instruction.
+     * @param currOperation  The operation to be performed.
+     * @param rs   Rs register.
+     * @param rt   Rt register.
+     * @param immed  Immediate value.
+     * @return instruction code for an immediate type instruction.
+     */
+    public static int immedInstruction(Operation currOperation, String rt, String rs, int immed) {
+        int bits =  currOperation.getOpValue();
+
+        bits |= immed;
         bits |= registers.get(rs) << 21;
         bits |= registers.get(rt) << 16;
 
@@ -228,9 +261,9 @@ public class Instruction {
      */
     public static int jumpInstruction(Operation currOperation, String address) {
         int bits = currOperation.getOpValue();
-        
-        bits |= symbolTable.getOffset(address) == 0 ? Integer.parseInt(address) << 2 : symbolTable.getOffset(address);
-        
+
+        bits |= symbolTable.getOffset(address) == 0 ? Integer.parseInt(address) : symbolTable.getOffset(address);
+
         return bits;
     }
 }

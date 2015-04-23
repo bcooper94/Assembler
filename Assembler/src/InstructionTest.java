@@ -25,6 +25,14 @@ public class InstructionTest {
         
         assertEquals(0x010A4820, Instruction.regInstruction(Operation.ADD, "$t1", "$t0", "$t2"));
         assertEquals(0x26DD0031, Instruction.immedInstruction(Operation.ADDIU, "$sp", "$22", "stuff"));
+        //assertEquals(0x, Instruction.immedInstruction(Operation.LW, "$a0", "$t5", 4))
+    }
+    
+    @Test
+    public void testParseInstruction() {
+        Instruction test1 = new Instruction("   sw $a0,4($a1)", 1);
+        
+        assertEquals(0xACA40004, test1.getinstructCode());
     }
 
 }

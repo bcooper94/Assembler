@@ -7,6 +7,9 @@ import java.io.PrintWriter;
  */
 public class Driver {
    
+    /*
+     * Driver for the assembler.
+     */
    public static void main(String args[]) {
    
       try {

@@ -19,6 +19,8 @@ public class SymbolTable {
 
     /**
      * Add a single symbol to the table.
+     * @param label   Label's name.
+     * @param lineNum   Offset that label appears at in the file.
      */
     public void addLabel(String label, int lineNum) {
         table.put(label, lineNum * 4);

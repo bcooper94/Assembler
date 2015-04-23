@@ -13,6 +13,8 @@ public class Parser {
    
    /**
     * Create the symbol table from a file.
+    * @param rdr  Reader to read contents from.
+    * @return A populated symbol table for the assembler.
     */
    public SymbolTable parseLabels(Reader rdr) {
       String line;
@@ -46,6 +48,8 @@ public class Parser {
    
    /**
     * Create the Program from a file.
+    * @param rdr  Reader to read contents from.
+    * @return A full Program to be written to an object file.
     */
    public Program parseInstructions(Reader rdr) {
       int lineNum = 0;

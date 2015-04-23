@@ -23,6 +23,7 @@ public class Program {
     
     /**
      * Write the actual binary assembly code to a stream.
+     * @param stream   OutputStream to write output to.
      */
     public void writeObjectFile(OutputStream stream) {
         byte[] toWrite;
@@ -43,6 +44,7 @@ public class Program {
     
     /**
      * Write a binary string representation of the assembly program.
+     * @param write   PrintWriter to write binary instructions to.
      */
     public void writeObjFileBinString(PrintWriter write) {
         try {

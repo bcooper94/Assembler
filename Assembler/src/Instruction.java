@@ -127,6 +127,8 @@ public class Instruction {
     
     /**
      * Test if a line of assembly code is an instruction. Used to see if PC needs to be incremented.
+     * @param line  A full line in the assembly file.
+     * @return whether or not the line is an instruction.
      */
     public static boolean isInstruction(String line) {
         boolean isInstruct = false;
@@ -142,6 +144,9 @@ public class Instruction {
     
     /**
      * Parse a single line of assembly code, returning the binary code as an int.
+     * @param line   A full line in the assembly file.
+     * @param lineNum  The line number of line.
+     * @return the instruction code created from the line.
      */
     private int parseInstruction(String line, int lineNum) {
         String formatted = line.split("#")[0].trim();
@@ -181,6 +186,11 @@ public class Instruction {
 
     /**
      * Create the binary representation of a register mode instruction.
+     * @param currOperation  The operation to be performed.
+     * @param rd   Rd register.
+     * @param rs   Rs register.
+     * @param rt   Rt register.
+     * @return instruction code for a register type instruction.
      */
     public static int regInstruction(Operation currOperation, String rd, String rs, String rt) {
         int bits = currOperation.getOpValue();
@@ -194,6 +204,11 @@ public class Instruction {
 
     /**
      * Create the binary representation of an immediate mode instruction.
+     * @param currOperation  The operation to be performed.
+     * @param rs   Rs register.
+     * @param rt   Rt register.
+     * @param immed  Immediate value.
+     * @return instruction code for an immediate type instruction.
      */
     public static int immedInstruction(Operation currOperation, String rt, String rs, String immed) {
         int bits =  currOperation.getOpValue();
@@ -207,6 +222,9 @@ public class Instruction {
 
     /**
      * Create the binary representation of a jump instruction.
+     * @param currOperation  Operation to be performed.
+     * @param address   Address offset of the instruction of the instruction to jump to.
+     * @return instruction code for a jump instruction.
      */
     public static int jumpInstruction(Operation currOperation, String address) {
         int bits = currOperation.getOpValue();

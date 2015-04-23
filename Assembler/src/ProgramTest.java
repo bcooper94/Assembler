@@ -4,6 +4,7 @@ import java.awt.List;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -16,8 +17,8 @@ public class ProgramTest {
     public void testWriteObjectFile() {
         try {
             FileInputStream inTest;
+            FileWriter writer;
             Program testProg = new Program();
-            ArrayList<Instruction> instList = new ArrayList<Instruction>();
             FileOutputStream output = new FileOutputStream(new File("testOut.txt"));
             
             testProg.addInstruction(new Instruction(0xFFFFFFFF));
@@ -43,6 +44,8 @@ public class ProgramTest {
             assertEquals(inTest.read(), 0xEF);
             
             inTest.close();
+            
+            
         }
         catch (IOException except) {
             System.err.println("Unable to write to file.");

@@ -25,12 +25,13 @@ public class Driver {
          
          //pass 2 = instructions
          FileReader instRdr = new FileReader(file);
-         Program program =parser.parseInstructions(instRdr);
+         Program program = parser.parseInstructions(instRdr);
          instRdr.close();
          
          
          PrintWriter writer = new PrintWriter(System.out);
          program.writeObjFileBinString(writer);
+         writer.close();
       }
       catch (Exception e)
       {

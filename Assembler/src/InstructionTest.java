@@ -24,7 +24,7 @@ public class InstructionTest {
         Instruction.useSymbolTable(testTable);
         
         assertEquals(0x010A4820, Instruction.regInstruction(Operation.ADD, "$t1", "$t0", "$t2"));
-        assertEquals(0x26DD0031, Instruction.immedInstruction(Operation.ADDIU, "$sp", "$22", "stuff"));
+        assertEquals(0x26DD0029, Instruction.immedInstruction(Operation.ADDIU, "$sp", "$22", "stuff", 1));
         //assertEquals(0x, Instruction.immedInstruction(Operation.LW, "$a0", "$t5", 4))
     }
     

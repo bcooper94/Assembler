@@ -52,7 +52,7 @@ public class Parser {
     * @return A full Program to be written to an object file.
     */
    public Program parseInstructions(Reader rdr) {
-      int lineNum = 0;
+      int lineNum = 1;
       String line;
       String instructionName;
       Instruction currInstruction;
@@ -63,10 +63,12 @@ public class Parser {
          
          System.out.print("Instructions and their line numbers, Remember to comment this out later\n");
          while(scanner.hasNext()) {
-            lineNum++;
             line = scanner.nextLine();
-            currInstruction = new Instruction(line, lineNum); 
-            program.addInstruction(currInstruction);
+            if (Instruction.isInstruction(line)) {
+                lineNum++;
+                currInstruction = new Instruction(line, lineNum); 
+                program.addInstruction(currInstruction);
+            }
          }
          scanner.close();
       }

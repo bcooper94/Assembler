@@ -186,11 +186,11 @@ public class Instruction {
                 }
                 else {
                     instructCode |= immedInstruction(
-                            currOperation, arguments[0], arguments[1], arguments[2]);
+                            currOperation, arguments[0], arguments[1], arguments[2], lineNum);
                 }
             }
             else if(currOperation.getType() == InstructType.JUMP){
-                instructCode |= jumpInstruction(currOperation, arguments[0]);
+                instructCode |= jumpInstruction(currOperation, arguments[0], lineNum);
             }
         }
 
@@ -224,11 +224,17 @@ public class Instruction {
      * @param immed  Immediate value.
      * @return instruction code for an immediate type instruction.
      */
-    public static int immedInstruction(Operation currOperation, String rt, String rs, String immed) {
+    public static int immedInstruction(
+            Operation currOperation, String rt, String rs, String immed, int curLine) {
         int bits =  currOperation.getOpValue();
 
-        bits |= symbolTable.getOffset(immed);            
-        bits |= Integer.parseInt(immed);
+        if (immed.matches("[0-9]+")) {
+            bits |= Integer.parseInt(immed);
+        }
+        else {
+            bits |= symbolTable.getOffset(immed) - curLine * 4;
+        }
+        
         bits |= registers.get(rs) << 21;
         bits |= registers.get(rt) << 16;
 
@@ -259,10 +265,10 @@ public class Instruction {
      * @param address   Address offset of the instruction of the instruction to jump to.
      * @return instruction code for a jump instruction.
      */
-    public static int jumpInstruction(Operation currOperation, String address) {
+    public static int jumpInstruction(Operation currOperation, String address, int curLine) {
         int bits = currOperation.getOpValue();
 
-        bits |= symbolTable.getOffset(address) == 0 ? Integer.parseInt(address) : symbolTable.getOffset(address);
+        bits |= symbolTable.getOffset(address) == 0 ? Integer.parseInt(address) * 4 : symbolTable.getOffset(address) - curLine * 4;
 
         return bits;
     }

@@ -49,7 +49,7 @@ public class Program {
     public void writeObjFileBinString(PrintWriter write) {
         try {
             for (Instruction instruct : instructions) {
-                write.println(Integer.toBinaryString(instruct.getinstructCode()));
+                write.println(Integer.toHexString(instruct.getinstructCode()));
             }
         }
         catch (Exception except) {

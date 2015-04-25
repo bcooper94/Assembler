@@ -23,6 +23,6 @@ public class SymbolTable {
      * @param lineNum   Offset that label appears at in the file.
      */
     public void addLabel(String label, int lineNum) {
-        table.put(label, lineNum * 4);
+        table.put(label, lineNum);
     }
 }

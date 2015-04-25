@@ -151,13 +151,14 @@ public class Instruction {
      */
     private int parseInstruction(String line, int lineNum) {
         String[] arrNotation;
+        Operation currOperation;
         String formatted = line.split("#")[0].trim();
         String[] arguments = formatted.split(",");
-        arguments[0] = arguments[0].split("\\s+")[1];
         String instructionName = formatted.split("\\s+")[0].trim();
-        Operation currOperation;
+//        String instructionName = formatted.substring(0, formatted.indexOf("$")).trim();
         int instructCode = 0;
 
+        arguments[0] = arguments[0].split("\\s+")[1];
         if(operations.containsKey(instructionName)) {
             currOperation = operations.get(instructionName);
             instructCode |= currOperation.getOpValue();
@@ -170,8 +171,14 @@ public class Instruction {
             // System.out.print(Arrays.toString(arguments));
 
             if(currOperation.getType() == InstructType.REGISTER) {
+                // special case: JR operation
+                if (currOperation == Operation.JR) {
+                    instructCode |= regInstruction(currOperation, "$0", arguments[0], "$0");
+                }
+                else {
                 instructCode |= regInstruction(
                         currOperation, arguments[0], arguments[1], arguments[2]);
+                }
             }
             else if(currOperation.getType() == InstructType.IMMEDIATE) {
                 // If instruct is using array notation
@@ -225,14 +232,14 @@ public class Instruction {
      * @return instruction code for an immediate type instruction.
      */
     public static int immedInstruction(
-            Operation currOperation, String rt, String rs, String immed, int curLine) {
+            Operation currOperation, String rs, String rt, String immed, int curLine) {
         int bits =  currOperation.getOpValue();
 
         if (immed.matches("[0-9]+")) {
             bits |= Integer.parseInt(immed);
         }
         else {
-            bits |= symbolTable.getOffset(immed) - curLine * 4;
+            bits |= (symbolTable.getOffset(immed) - curLine) & 0xFFFF;
         }
         
         bits |= registers.get(rs) << 21;

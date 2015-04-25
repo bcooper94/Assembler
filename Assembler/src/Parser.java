@@ -18,7 +18,7 @@ public class Parser {
     */
    public SymbolTable parseLabels(Reader rdr) {
       String line;
-      int lineNum = 0;
+      int lineNum = 1;
       String labelString;
       SymbolTable symTab = new SymbolTable();
       
@@ -65,9 +65,9 @@ public class Parser {
          while(scanner.hasNext()) {
             line = scanner.nextLine();
             if (Instruction.isInstruction(line)) {
-                lineNum++;
-                currInstruction = new Instruction(line, lineNum); 
+                currInstruction = new Instruction(line, lineNum);
                 program.addInstruction(currInstruction);
+                lineNum++;
             }
          }
          scanner.close();

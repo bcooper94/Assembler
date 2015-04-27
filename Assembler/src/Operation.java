@@ -18,7 +18,9 @@ public enum Operation {
     
     ORI(0x34000000, InstructType.IMMEDIATE) {
         public int apply(int instructCode, int[] regs, int[] memory, int pc) {
-            return 0;
+            regs[getRTReg(instructCode)] = regs[getRSReg(instructCode)] | getImmediate(instructCode);
+            
+            return pc + 4;
         }
     },
     
@@ -131,7 +133,7 @@ public enum Operation {
     
     LW(0x8C000000, InstructType.IMMEDIATE) {
         public int apply(int instructCode, int[] regs, int[] memory, int pc) {
-            regs[getRDReg(instructCode)] = memory[(getImmediate(instructCode))];
+            regs[getRTReg(instructCode)] = memory[(getImmediate(instructCode)) + regs[getRSReg(instructCode)]];
             
             return pc + 4;
         }
@@ -249,7 +251,7 @@ public enum Operation {
         int newVal = immediate;
         
         if ((immediate & 0x00008000) > 0) {
-            newVal |= 0xFFFF;
+            newVal |= 0xFFFF0000;
         }
         
         return newVal;

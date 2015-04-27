@@ -17,10 +17,8 @@ public enum Operation {
     },
     
     ORI(0x34000000, InstructType.IMMEDIATE) {
-        public int apply(int instructCode, int[] regs, int[] memory, int pc) {
+        public void apply(int instructCode, int[] regs, int[] memory) {
             regs[getRTReg(instructCode)] = regs[getRSReg(instructCode)] | getImmediate(instructCode);
-            
-            return pc + 4;
         }
     },
     
@@ -76,100 +74,82 @@ public enum Operation {
     },
     
     ADDI(0x20000000, InstructType.IMMEDIATE) {
-        public int apply(int instructCode, int[] regs, int[] memory, int pc) {
+        public void apply(int instructCode, int[] regs, int[] memory) {
             regs[getRTReg(instructCode)] = regs[getRSReg(instructCode)] + signExtendImmediate(getImmediate(instructCode));
-
-            return pc + 4;
         }
     },
     
     ADDIU(0x24000000, InstructType.IMMEDIATE) {
-        public int apply(int instructCode, int[] regs, int[] memory, int pc) {
+        public void apply(int instructCode, int[] regs, int[] memory) {
             long rs = Integer.toUnsignedLong(regs[getRSReg(instructCode)]);
             long immediate = Integer.toUnsignedLong(signExtendImmediate(getImmediate(instructCode)));
             
             regs[getRTReg(instructCode)] = (int)(rs + immediate);
-            
-            return pc + 4;
         }
     },
     
     SLTIU(0x2C000000, InstructType.IMMEDIATE) {
-        public int apply(int instructCode, int[] regs, int[] memory, int pc) {
+        public void apply(int instructCode, int[] regs, int[] memory) {
             long rs = Integer.toUnsignedLong(regs[getRSReg(instructCode)]);
             long immediate = Integer.toUnsignedLong(getImmediate(instructCode));
             
             regs[getRTReg(instructCode)] = rs < immediate ? 1 : 0;
-            
-            return pc + 4;
         }
     },
     
     BEQ(0x10000000, InstructType.IMMEDIATE) {
-        public int apply(int instructCode, int[] regs, int[] memory, int pc) {
-            int newPC = pc + 4;
-            
+        public void apply(int instructCode, int[] regs, int[] memory) {
             if (regs[getRSReg(instructCode)] == regs[getRTReg(instructCode)]) {
-//                 TODO: multiply immediate by 4?
-                newPC += getImmediate(instructCode);
+//                multiply immediate by 4?
+//                newPC += getImmediate(instructCode);
             }
-            
-            return newPC;
         }
     },
     
     BNE(0x14000000, InstructType.IMMEDIATE) {
-        public int apply(int instructCode, int[] regs, int[] memory, int pc) {
-            int newPC = pc + 4;
+        public void apply(int instructCode, int[] regs, int[] memory) {
+//            int newPC = pc + 1;
             
             if (regs[getRSReg(instructCode)] != regs[getRTReg(instructCode)]) {
-                // TODO: multiply immediate by 4?
-                newPC += getImmediate(instructCode);
+                // multiply immediate by 4?
+//                newPC += getImmediate(instructCode);
             }
-            
-            return newPC;
         }
     },
     
     LW(0x8C000000, InstructType.IMMEDIATE) {
-        public int apply(int instructCode, int[] regs, int[] memory, int pc) {
+        public void apply(int instructCode, int[] regs, int[] memory) {
             regs[getRTReg(instructCode)] = memory[(getImmediate(instructCode)) + regs[getRSReg(instructCode)]];
-            
-            return pc + 4;
         }
     },
     
     LUI(0x3C000000, InstructType.IMMEDIATE) {
-        public int apply(int instructCode, int[] regs, int[] memory, int pc) {
+        public void apply(int instructCode, int[] regs, int[] memory) {
             regs[getRTReg(instructCode)] = getImmediate(instructCode) << 16;
-            
-            return pc + 4;
         }
     },
     
     SW(0xAC000000, InstructType.IMMEDIATE) {
-        public int apply(int instructCode, int[] regs, int[] memory, int pc) {
+        public void apply(int instructCode, int[] regs, int[] memory) {
             memory[(getImmediate(instructCode)) + regs[getRSReg(instructCode)]] = regs[getRTReg(instructCode)];
-            
-            return pc + 4;
         }
     },
     
     J(0x08000000, InstructType.JUMP) {
-        public int apply(int instructCode, int[] regs, int[] memory, int pc) {
-            return instructCode & 0x3FFFFFF;
+        public void apply(int instructCode, int[] regs, int[] memory) {
+//            return instructCode & 0x3FFFFFF;
         }
     },
     
     JR(0x08, InstructType.REGISTER) {
-        public int apply(int instructCode, int[] regs, int[] memory, int pc) {
-            return 0;
+        public void apply(int instructCode, int[] regs, int[] memory) {
+//            return 0;
         }
     },
     
     JAL(0x0C000000, InstructType.JUMP) {
-        public int apply(int instructCode, int[] regs, int[] memory, int pc) {
-            return 0;
+        public void apply(int instructCode, int[] regs, int[] memory) {
+//            return 0;
         }
     };
     
@@ -215,7 +195,7 @@ public enum Operation {
     }
     
     /**
-     * Apply the operation.
+     * Apply the register mode operation.
      * @param instructCode  Given full instruction code.
      * @param regs   Array of all regs.
      */
@@ -223,7 +203,10 @@ public enum Operation {
         throw new UnsupportedOperationException();
     }
     
-    public int apply(int instructCode, int[] regs, int[] memory, int pc) {
+    /**
+     * Apply the immediate mode operation.
+     */
+    public void apply(int instructCode, int[] regs, int[] memory) {
         throw new UnsupportedOperationException();
     }
     

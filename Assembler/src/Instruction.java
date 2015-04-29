@@ -183,11 +183,11 @@ public class Instruction {
             else if(currOperation.getType() == InstructType.IMMEDIATE) {
                 // If instruct is using array notation
                 if (arguments[1].contains("(") && arguments[1].contains(")")) {
-                    System.err.println(arguments[1]);
+                 //   System.err.println(arguments[1]);
                     arrNotation = arguments[1].split("\\(");
                     arrNotation[1] = arrNotation[1].substring(0, arrNotation[1].length() - 1);
-                    System.out.println("ArrNotation[0] " + arrNotation[0]);
-                    System.out.println("ArrNotation[1] " + arrNotation[1]);
+                 //   System.out.println("ArrNotation[0] " + arrNotation[0]);
+                 //   System.out.println("ArrNotation[1] " + arrNotation[1]);
                     instructCode |= immedInstruction(
                             currOperation, arguments[0], arrNotation[1], Integer.parseInt(arrNotation[0]));
                 }

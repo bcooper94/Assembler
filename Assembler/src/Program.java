@@ -35,7 +35,7 @@ public class Program {
                 buffer.putInt(instruct.getinstructCode());
                 toWrite = buffer.array();
                 stream.write(toWrite);
-            }
+            } 
         }
         catch (IOException except) {
             System.err.println("Unable to write buffer.");
@@ -49,7 +49,8 @@ public class Program {
     public void writeObjFileBinString(PrintWriter write) {
         try {
             for (Instruction instruct : instructions) {
-                write.println(Integer.toHexString(instruct.getinstructCode()));
+               write.write(Integer.toHexString(instruct.getinstructCode()));
+              // write.println(Integer.toHexString(instruct.getinstructCode()));
             }
         }
         catch (Exception except) {

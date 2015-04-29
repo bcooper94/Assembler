@@ -25,7 +25,7 @@ public class Parser {
       try {
          Scanner scanner = new Scanner(rdr);
          
-         System.out.print("Labels and their line numbers, Remember to comment this out later\n");
+         //System.out.print("Labels and their line numbers, Remember to comment this out later\n");
          while(scanner.hasNext()) {
             line = scanner.nextLine();
             if(Instruction.isInstruction(line)) {
@@ -34,7 +34,7 @@ public class Parser {
             if(line.contains(":")) {
                labelString = line.split(":")[0];
                symTab.addLabel(labelString, lineNum);
-               System.out.print(labelString + " " + lineNum + " \n");  //this is to be commented later
+              // System.out.print(labelString + " " + lineNum + " \n");  //this is to be commented later
             }        
          }
          scanner.close();
@@ -61,7 +61,7 @@ public class Parser {
       try {
          Scanner scanner = new Scanner(rdr);
          
-         System.out.print("Instructions and their line numbers, Remember to comment this out later\n");
+      //   System.out.print("Instructions and their line numbers, Remember to comment this out later\n");
          while(scanner.hasNext()) {
             line = scanner.nextLine();
             if (Instruction.isInstruction(line)) {

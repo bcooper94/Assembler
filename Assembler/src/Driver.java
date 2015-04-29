@@ -40,34 +40,23 @@ public class Driver {
             program.writeObjectFile(fileOutStrm);
             
             FileInputStream fileInStrm = new FileInputStream(fileName);
-           
-            /*PipedOutputStream pipedOutStrm = new PipedOutputStream();
-            //PrintWriter writer = new PrintWriter(pipedOutStrm);
-            //program.writeObjFileBinString(writer);
-            
-            writer.flush();
-            
-            PipedInputStream pipedInStrm = new PipedInputStream(pipedOutStrm);
-            System.out.print(pipedInStrm.read());
-            pipedOutStrm.close();
-            pipedInStrm.close();
-            */
             
             Simulator simulator = new Simulator();
             simulator.loadProgram(fileInStrm);
             
             
             Scanner sc = new Scanner(System.in);
-            System.out.println("type 's' for a single step or 'r' for a run");
-            String input = sc.next();
-            if(input.equals("s")) {
-                simulator.singleStep();
-            }
-            else if(input.equals("r")) {
-                simulator.run();
-            }
-            else {
-                System.out.println("type 's' for a single step or 'r' for a run");
+            String input = " ";
+            while(!input.equals("e")) { 
+                 System.out.println("type 's' for a single step, 'r' for a run,  or 'e' to exit");
+                input = sc.next();
+                
+                if(input.equals("s")) {
+                    simulator.singleStep();
+                }
+                else if(input.equals("r")) {
+                    simulator.run();
+                 }
             }
             sc.close();
             fileInStrm.close();

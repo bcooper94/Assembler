@@ -28,7 +28,7 @@ public class Simulator {
         memoryRefs = 0;
     }
     
-    
+  /*  
     private byte decToHex(int dec) {
         byte hex;
         if (dec >= 48 && dec <= 57) {
@@ -38,7 +38,7 @@ public class Simulator {
             hex = (byte)(dec - 87);
         }
         return hex;
-    }
+    }*/
     
     /**
      * Load program and its data values.
@@ -46,16 +46,15 @@ public class Simulator {
      */
     public void loadProgram(InputStream input) {
         int dec;
-        byte[] bytes = new byte[8];
+        byte[] bytes = new byte[4];
         try{
             //fill memory with opcodes
             for(int address = PC_START; input.available() != 0; address++) {
-          
+            input.read(bytes);
                 //find an opcode from input
-                for(int ndx = 0; ndx < 8; ndx++) {
-                    dec = input.read();
-                    bytes[ndx] = decToHex(dec);
-                }
+                /*for(int ndx = 0; ndx < 4; ndx++) {
+                    bytes[ndx] = (byte)(input.read());
+                }*/
 
                 memory[address] = byteArrToInt(bytes);
                 endOfText = address;
@@ -82,9 +81,21 @@ public class Simulator {
      */
     private boolean executeNextInstruct() {
         int currPC = PC;
-        PC++;
+        Operation op;
+        int instructCode = memory[PC++];
+
         System.out.println(Integer.toBinaryString(accessMemory(currPC)));
-        //Operation op = new Operation(accessMemory(currPC) & 0x1F/*, registers*/);
+        System.out.println(accessMemory(currPC)); 
+        
+        op = Operation.getOperation(instructCode);
+        
+        if(op.getType() == InstructType.REGISTER) {
+            op.apply(instructCode, registers);
+        }
+        else {
+            op.apply(instructCode, registers, memory);
+        }
+        
         return PC <= endOfText;
     }
     
@@ -104,7 +115,7 @@ public class Simulator {
     public void run() {
         boolean hasNext = true;
         while(hasNext && (registers[2] != 10 /*|| 
-        Operations.getOperation(accessMemory(PC)& 0x1F) != SYSCALL.getOperation*/)) {
+        Operation.getOperation(memory[PC]) != SYSCALL.getOperation*/)) {
             hasNext = executeNextInstruct();
         }
         registerDump();
@@ -120,7 +131,7 @@ public class Simulator {
     /**
      * Convert a byte aray (little endian) to an int.
      */
-    public static int byteArrToInt(byte[] bytes) {
+   /* public static int byteArrToInt(byte[] bytes) {
         int newInt = bytes[7];
         
         newInt |= ((int)bytes[6]) << 4;
@@ -132,5 +143,16 @@ public class Simulator {
         newInt |= ((int)bytes[0]) << 28;
         
         return newInt;
+    }*/
+    
+        public static int byteArrToInt(byte[] bytes) {
+        int newInt = bytes[3];
+        
+        newInt |= ((int)bytes[2]) << 8;
+        newInt |= ((int)bytes[1]) << 16;
+        newInt |= ((int)bytes[0]) << 24;
+        
+        return newInt;
     }
+    
 }

@@ -156,8 +156,7 @@ public enum Operation {
     SYSCALL(0x0C, InstructType.REGISTER) {
         public void apply(int instructCode, int[] regs, int[] memory) {
         }
-    }
-        ;
+    };
     
     private static final int OPCODE_MASK = 0xFC000000;
     private static final int RS_MASK = 0x03E00000;
@@ -198,7 +197,7 @@ public enum Operation {
         return this.type;
     }
     
-    public Operation getOperation(int instructCode) {
+    public static Operation getOperation(int instructCode) {
         return opMap.get(instructCode & 0xFC00003F);
     }
     

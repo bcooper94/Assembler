@@ -4,43 +4,43 @@ import java.util.HashMap;
  * Represent each supported operation with its func/op code and instruction mode.
  */
 public enum Operation {
-    AND(0x24, InstructType.REGISTER) {
+    AND(0x24, InstructType.REGISTER, 1) {
         public void apply(int instructCode, int[] regs) {
             regs[getRDReg(instructCode)] = regs[getRSReg(instructCode)] & regs[getRTReg(instructCode)];
         }
     },
     
-    OR(0x25, InstructType.REGISTER) {
+    OR(0x25, InstructType.REGISTER, 1) {
         public void apply(int instructCode, int[] regs) {
             regs[getRDReg(instructCode)] = regs[getRSReg(instructCode)] | regs[getRTReg(instructCode)];
         }
     },
     
-    ORI(0x34000000, InstructType.IMMEDIATE) {
+    ORI(0x34000000, InstructType.IMMEDIATE, 1) {
         public void apply(int instructCode, int[] regs, int[] memory) {
             regs[getRTReg(instructCode)] = regs[getRSReg(instructCode)] | getImmediate(instructCode);
         }
     },
     
-    ADD(0x20, InstructType.REGISTER) {
+    ADD(0x20, InstructType.REGISTER, 1) {
         public void apply(int instructCode, int[] regs) {
             regs[getRDReg(instructCode)] = regs[getRSReg(instructCode)] + regs[getRTReg(instructCode)];
         }
     },
     
-    ADDU(0x21, InstructType.REGISTER) {
+    ADDU(0x21, InstructType.REGISTER, 1) {
         public void apply(int instructCode, int[] regs) {
 
         }
     },
     
-    SLL(0x00, InstructType.REGISTER) {
+    SLL(0x00, InstructType.REGISTER, 1) {
         public void apply(int instructCode, int[] regs) {
             regs[getRDReg(instructCode)] = regs[getRTReg(instructCode)] << getShamt(instructCode);
         }
     },
     
-    SRL(0x02, InstructType.REGISTER) {
+    SRL(0x02, InstructType.REGISTER, 1) {
         public void apply(int instructCode, int[] regs) {
             int MASK = 0x80000000;
             
@@ -52,19 +52,19 @@ public enum Operation {
         }
     },
     
-    SRA(0x03, InstructType.REGISTER) {
+    SRA(0x03, InstructType.REGISTER, 1) {
         public void apply(int instructCode, int[] regs) {
             regs[getRDReg(instructCode)] = regs[getRTReg(instructCode)] >> getShamt(instructCode);
         }
     },
     
-    SUB(0x22, InstructType.REGISTER) {
+    SUB(0x22, InstructType.REGISTER, 1) {
         public void apply(int instructCode, int[] regs) {
             regs[getRDReg(instructCode)] = regs[getRSReg(instructCode)] - regs[getRTReg(instructCode)];
         }
     },
     
-    SLTU(0x2b, InstructType.REGISTER) {
+    SLTU(0x2b, InstructType.REGISTER, 1) {
         public void apply(int instructCode, int[] regs) {
             long rs = Integer.toUnsignedLong(regs[getRSReg(instructCode)]);
             long rt = Integer.toUnsignedLong(regs[getRTReg(instructCode)]);
@@ -73,13 +73,13 @@ public enum Operation {
         }
     },
     
-    ADDI(0x20000000, InstructType.IMMEDIATE) {
+    ADDI(0x20000000, InstructType.IMMEDIATE, 1) {
         public void apply(int instructCode, int[] regs, int[] memory) {
             regs[getRTReg(instructCode)] = regs[getRSReg(instructCode)] + signExtendImmediate(getImmediate(instructCode));
         }
     },
     
-    ADDIU(0x24000000, InstructType.IMMEDIATE) {
+    ADDIU(0x24000000, InstructType.IMMEDIATE, 1) {
         public void apply(int instructCode, int[] regs, int[] memory) {
             long rs = Integer.toUnsignedLong(regs[getRSReg(instructCode)]);
             long immediate = Integer.toUnsignedLong(signExtendImmediate(getImmediate(instructCode)));
@@ -88,7 +88,7 @@ public enum Operation {
         }
     },
     
-    SLTIU(0x2C000000, InstructType.IMMEDIATE) {
+    SLTIU(0x2C000000, InstructType.IMMEDIATE, 1) {
         public void apply(int instructCode, int[] regs, int[] memory) {
             long rs = Integer.toUnsignedLong(regs[getRSReg(instructCode)]);
             long immediate = Integer.toUnsignedLong(getImmediate(instructCode));
@@ -97,7 +97,7 @@ public enum Operation {
         }
     },
     
-    BEQ(0x10000000, InstructType.IMMEDIATE) {
+    BEQ(0x10000000, InstructType.IMMEDIATE, 1) {
         public void apply(int instructCode, int[] regs, int[] memory) {
             if (regs[getRSReg(instructCode)] == regs[getRTReg(instructCode)]) {
 //                multiply immediate by 4?
@@ -106,7 +106,7 @@ public enum Operation {
         }
     },
     
-    BNE(0x14000000, InstructType.IMMEDIATE) {
+    BNE(0x14000000, InstructType.IMMEDIATE, 1) {
         public void apply(int instructCode, int[] regs, int[] memory) {
 //            int newPC = pc + 1;
             
@@ -117,37 +117,37 @@ public enum Operation {
         }
     },
     
-    LW(0x8C000000, InstructType.IMMEDIATE) {
+    LW(0x8C000000, InstructType.IMMEDIATE, 1) {
         public void apply(int instructCode, int[] regs, int[] memory) {
             regs[getRTReg(instructCode)] = memory[(getImmediate(instructCode)) + regs[getRSReg(instructCode)]];
         }
     },
     
-    LUI(0x3C000000, InstructType.IMMEDIATE) {
+    LUI(0x3C000000, InstructType.IMMEDIATE, 1) {
         public void apply(int instructCode, int[] regs, int[] memory) {
             regs[getRTReg(instructCode)] = getImmediate(instructCode) << 16;
         }
     },
     
-    SW(0xAC000000, InstructType.IMMEDIATE) {
+    SW(0xAC000000, InstructType.IMMEDIATE, 1) {
         public void apply(int instructCode, int[] regs, int[] memory) {
             memory[(getImmediate(instructCode)) + regs[getRSReg(instructCode)]] = regs[getRTReg(instructCode)];
         }
     },
     
-    J(0x08000000, InstructType.JUMP) {
+    J(0x08000000, InstructType.JUMP, 1) {
         public void apply(int instructCode, int[] regs, int[] memory) {
 //            return instructCode & 0x3FFFFFF;
         }
     },
     
-    JR(0x08, InstructType.REGISTER) {
+    JR(0x08, InstructType.REGISTER, 1) {
         public void apply(int instructCode, int[] regs, int[] memory) {
 //            return 0;
         }
     },
     
-    JAL(0x0C000000, InstructType.JUMP) {
+    JAL(0x0C000000, InstructType.JUMP, 1) {
         public void apply(int instructCode, int[] regs, int[] memory) {
 //            return 0;
         }
@@ -161,6 +161,7 @@ public enum Operation {
     private static final int FUNC_MASK = 0x0000003F;
     private final int opValue;
     private final InstructType type;
+    private final int cycles;
     private static HashMap<Integer, Operation> opMap;
     
     static {
@@ -171,9 +172,10 @@ public enum Operation {
         }
     }
     
-    private Operation(int opValue, InstructType type) {
+    private Operation(int opValue, InstructType type, int cycles) {
         this.opValue = opValue;
         this.type = type;
+        this.cycles = cycles;
     }
     
     /**
@@ -195,6 +197,13 @@ public enum Operation {
     }
     
     /**
+     * Get the cycles per instruction of an instruction.
+     */
+    public int getCyclesPerInstruct() {
+        return this.cycles;
+    }
+    
+    /**
      * Apply the register mode operation.
      * @param instructCode  Given full instruction code.
      * @param regs   Array of all regs.
@@ -205,6 +214,9 @@ public enum Operation {
     
     /**
      * Apply the immediate mode operation.
+     * @param instructCode   Full instruction code.
+     * @param regs  Array of all registers.
+     * @param memory   Array of all memory.
      */
     public void apply(int instructCode, int[] regs, int[] memory) {
         throw new UnsupportedOperationException();

@@ -28,7 +28,7 @@ public class Simulator {
         memoryRefs = 0;
     }
     
-    
+  /*  
     private byte decToHex(int dec) {
         byte hex;
         if (dec >= 48 && dec <= 57) {
@@ -38,7 +38,7 @@ public class Simulator {
             hex = (byte)(dec - 87);
         }
         return hex;
-    }
+    }*/
     
     /**
      * Load program and its data values.
@@ -53,8 +53,7 @@ public class Simulator {
           
                 //find an opcode from input
                 for(int ndx = 0; ndx < 8; ndx++) {
-                    dec = input.read();
-                    bytes[ndx] = decToHex(dec);
+                    bytes[ndx] = (byte)(input.read());
                 }
 
                 memory[address] = byteArrToInt(bytes);
@@ -82,9 +81,21 @@ public class Simulator {
      */
     private boolean executeNextInstruct() {
         int currPC = PC;
-        PC++;
+        Operation op;
+        int instructCode = memory[PC++];
+
         System.out.println(Integer.toBinaryString(accessMemory(currPC)));
-        //Operation op = new Operation(accessMemory(currPC) & 0x1F/*, registers*/);
+        System.out.println(accessMemory(currPC)); 
+        
+        op = Operation.getOperation(instructCode);
+        
+        if(op.getType() == InstructType.REGISTER) {
+            op.apply(instructCode, registers);
+        }
+        else {
+            op.apply(instructCode, registers, memory);
+        }
+        
         return PC <= endOfText;
     }
     
@@ -114,7 +125,7 @@ public class Simulator {
      * Print the contents of every register.
      */
     public void registerDump() {
-        System.out.println("\n" + Arrays.toString(registers));
+      //  System.out.println("\n" + Arrays.toString(registers));
     }
     
     /**

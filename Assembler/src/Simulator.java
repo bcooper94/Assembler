@@ -93,9 +93,9 @@ public class Simulator {
      * @return
      */
     public boolean singleStep() {
-       executeNextInstruct();
+       boolean hadNext = executeNextInstruct();
        registerDump();
-       return false;
+       return hadNext;
     }
     
     /**
@@ -103,7 +103,8 @@ public class Simulator {
      */
     public void run() {
         boolean hasNext = true;
-        while(registers[2] != 10 && hasNext) {
+        while(hasNext && (registers[2] != 10 /*|| 
+        Operations.getOperation(accessMemory(PC)& 0x1F) != SYSCALL.getOperation*/)) {
             hasNext = executeNextInstruct();
         }
         registerDump();

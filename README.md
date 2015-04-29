@@ -7,7 +7,7 @@ TODO:
    - .data in Sumulator
    - new Operations = JR, JAL... (see what is needed in countbits.asm)
    
-   Daniel:
+  Daniel:
     - Syscall
     - Count Mem Refs
     - Count Instructions

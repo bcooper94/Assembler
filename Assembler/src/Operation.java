@@ -151,7 +151,13 @@ public enum Operation {
         public void apply(int instructCode, int[] regs, int[] memory) {
 //            return 0;
         }
-    };
+    },
+    
+    SYSCALL(0x0C, InstructType.REGISTER) {
+        public void apply(int instructCode, int[] regs, int[] memory) {
+        }
+    }
+        ;
     
     private static final int OPCODE_MASK = 0xFC000000;
     private static final int RS_MASK = 0x03E00000;

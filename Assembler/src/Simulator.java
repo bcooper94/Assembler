@@ -120,7 +120,7 @@ public class Simulator {
     /**
      * Convert a byte aray (little endian) to an int.
      */
-    public static int byteArrToInt(byte[] bytes) {
+   /* public static int byteArrToInt(byte[] bytes) {
         int newInt = bytes[7];
         
         newInt |= ((int)bytes[6]) << 4;
@@ -132,5 +132,16 @@ public class Simulator {
         newInt |= ((int)bytes[0]) << 28;
         
         return newInt;
+    }*/
+    
+        public static int byteArrToInt(byte[] bytes) {
+        int newInt = bytes[3];
+        
+        newInt |= ((int)bytes[2]) << 8;
+        newInt |= ((int)bytes[1]) << 16;
+        newInt |= ((int)bytes[0]) << 24;
+        
+        return newInt;
     }
+    
 }

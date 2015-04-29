@@ -3,7 +3,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.FileInputStream;
-//import java.io.PipedOutputStream;
+import java.io.FileOutputStream;
+import java.util.Scanner;
 
 /**
  * A driver for the assembler program.
@@ -31,13 +32,16 @@ public class Driver {
             Program program = parser.parseInstructions(instRdr);
             instRdr.close();
 
-            PrintWriter writer = new PrintWriter(fileName);
-            program.writeObjFileBinString(writer);
-            writer.close();
+          /*  PrintWriter writer = new PrintWriter(fileName);
+            program.writeObjFileBinString(writer); 
+            writer.close();*/
+            
+            FileOutputStream fileOutStrm = new FileOutputStream(fileName);
+            program.writeObjectFile(fileOutStrm);
             
             FileInputStream fileInStrm = new FileInputStream(fileName);
            
-            /*//PipedOutputStream pipedOutStrm = new PipedOutputStream();
+            /*PipedOutputStream pipedOutStrm = new PipedOutputStream();
             //PrintWriter writer = new PrintWriter(pipedOutStrm);
             //program.writeObjFileBinString(writer);
             
@@ -51,9 +55,21 @@ public class Driver {
             
             Simulator simulator = new Simulator();
             simulator.loadProgram(fileInStrm);
-            simulator.run();
-            //simulator.singleStep();
             
+            
+            Scanner sc = new Scanner(System.in);
+            System.out.println("type 's' for a single step or 'r' for a run");
+            String input = sc.next();
+            if(input.equals("s")) {
+                simulator.singleStep();
+            }
+            else if(input.equals("r")) {
+                simulator.run();
+            }
+            else {
+                System.out.println("type 's' for a single step or 'r' for a run");
+            }
+            sc.close();
             fileInStrm.close();
             
         }

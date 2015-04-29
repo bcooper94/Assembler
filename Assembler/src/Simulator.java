@@ -46,15 +46,15 @@ public class Simulator {
      */
     public void loadProgram(InputStream input) {
         int dec;
-        byte[] bytes = new byte[8];
+        byte[] bytes = new byte[4];
         try{
             //fill memory with opcodes
             for(int address = PC_START; input.available() != 0; address++) {
-          
+            input.read(bytes);
                 //find an opcode from input
-                for(int ndx = 0; ndx < 8; ndx++) {
+                /*for(int ndx = 0; ndx < 4; ndx++) {
                     bytes[ndx] = (byte)(input.read());
-                }
+                }*/
 
                 memory[address] = byteArrToInt(bytes);
                 endOfText = address;
@@ -115,7 +115,7 @@ public class Simulator {
     public void run() {
         boolean hasNext = true;
         while(hasNext && (registers[2] != 10 /*|| 
-        Operations.getOperation(accessMemory(PC)& 0x1F) != SYSCALL.getOperation*/)) {
+        Operation.getOperation(memory[PC]) != SYSCALL.getOperation*/)) {
             hasNext = executeNextInstruct();
         }
         registerDump();
@@ -125,7 +125,7 @@ public class Simulator {
      * Print the contents of every register.
      */
     public void registerDump() {
-      //  System.out.println("\n" + Arrays.toString(registers));
+        System.out.println("\n" + Arrays.toString(registers));
     }
     
     /**

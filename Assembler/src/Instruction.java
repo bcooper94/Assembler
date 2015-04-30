@@ -176,7 +176,7 @@ public class Instruction {
                     instructCode |= regInstruction(currOperation, "$0", arguments[0], "$0");
                 }
                 else {
-                instructCode |= regInstruction(
+                    instructCode |= regInstruction(
                         currOperation, arguments[0], arguments[1], arguments[2]);
                 }
             }
@@ -213,13 +213,12 @@ public class Instruction {
      * @return instruction code for a register type instruction.
      */
     public static int regInstruction(
-            Operation currOperation, String rd, String rs, String rt) {
+            Operation currOperation, String rd, String rs, String rt) {   
         int bits = currOperation.getOpValue();
-
-        bits |= registers.get(rd) << 11;
-        bits |= registers.get(rt) << 16;
-        bits |= registers.get(rs) << 21;
-
+        bits += registers.get(rd) << 11;
+        bits += registers.get(rt) << 16;
+        bits += registers.get(rs) << 21;
+        
         return bits;
     }
 
@@ -233,7 +232,7 @@ public class Instruction {
      */
     public static int immedInstruction(
             Operation currOperation, String rs, String rt, String immed, int curLine) {
-        int bits =  currOperation.getOpValue();
+        int bits = currOperation.getOpValue();
 
         if (immed.matches("[0-9]+")) {
             bits |= Integer.parseInt(immed);

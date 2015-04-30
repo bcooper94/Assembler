@@ -64,8 +64,7 @@ public class Simulator {
         int currPC = PC;
         Operation op;
         int instructCode = memory[PC++];
-
-        //System.out.println(Integer.toBinaryString(accessMemory(currPC)));
+        
         op = Operation.getOperation(instructCode);
         
         if(op.getType() == InstructType.REGISTER) {
@@ -93,11 +92,8 @@ public class Simulator {
      * Run the rest of the program and print contents of every register upon completion.
      */
     public void run() {
-        boolean hasNext = true;
-        while(hasNext && (registers[2] != 10 /*|| 
-        Operation.getOperation(memory[PC]) != SYSCALL.getOperation*/)) {
-            hasNext = executeNextInstruct();
-        }
+        while(executeNextInstruct() && (registers[2] != 10 || 
+        Operation.getOperation(memory[PC]) != Operation.getOperation(0x0C)));
         registerDump();
         statsPrint();
     }

@@ -155,7 +155,6 @@ public class Instruction {
         String formatted = line.split("#")[0].trim();
         String[] arguments = formatted.split(",");
         String instructionName = formatted.split("\\s+")[0].trim();
-//        String instructionName = formatted.substring(0, formatted.indexOf("$")).trim();
         int instructCode = 0;
 
         arguments[0] = arguments[0].split("\\s+")[1];
@@ -166,9 +165,6 @@ public class Instruction {
             for(int ndx = 0; ndx < arguments.length; ndx++) {
                 arguments[ndx] = arguments[ndx].trim();
             }
-
-            // System.out.print(instructionName);
-            // System.out.print(Arrays.toString(arguments));
 
             if(currOperation.getType() == InstructType.REGISTER) {
                 // special case: JR operation

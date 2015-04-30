@@ -31,11 +31,6 @@ public class Driver {
             FileReader instRdr = new FileReader(file);
             Program program = parser.parseInstructions(instRdr);
             instRdr.close();
-
-          /*  PrintWriter writer = new PrintWriter(fileName);
-            program.writeObjFileBinString(writer); 
-            writer.close();*/
-            
             
             FileOutputStream fileOutStrm = new FileOutputStream(fileName);
             program.writeObjectFile(fileOutStrm);
@@ -53,11 +48,11 @@ public class Driver {
             while(!input.equals("e")) {   
                 input = sc.next();
                 
-                if(input.equals("s")) {
-                    simulator.singleStep();
-                }
-                else if(input.equals("r")) {
+                if(input.equals("r")) {
                     simulator.run();
+                }
+                else if(input.equals("s")) {
+                    simulator.singleStep();
                 }
             }
             

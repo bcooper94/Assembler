@@ -17,7 +17,7 @@ public class Driver {
     public static void main(String args[]) {
         String fileName = "instructionBits";
         try {
-            File file = new File("test1.asm");
+            File file = new File("test2.asm");
             Parser parser = new Parser();
 
             //pass 1 = labelsB
@@ -31,36 +31,33 @@ public class Driver {
             FileReader instRdr = new FileReader(file);
             Program program = parser.parseInstructions(instRdr);
             instRdr.close();
-
-          /*  PrintWriter writer = new PrintWriter(fileName);
-            program.writeObjFileBinString(writer); 
-            writer.close();*/
             
             FileOutputStream fileOutStrm = new FileOutputStream(fileName);
             program.writeObjectFile(fileOutStrm);
             
             FileInputStream fileInStrm = new FileInputStream(fileName);
-            
             Simulator simulator = new Simulator();
             simulator.loadProgram(fileInStrm);
             
-            
             Scanner sc = new Scanner(System.in);
             String input = " ";
-            while(!input.equals("e")) { 
-                 System.out.println("type 's' for a single step, 'r' for a run,  or 'e' to exit");
+            System.out.println("s for a single step\n" + 
+                               "r for a run\n" + 
+                               "e to exit\n");
+                                    
+            while(!input.equals("e")) {   
                 input = sc.next();
                 
-                if(input.equals("s")) {
+                if(input.equals("r")) {
+                    simulator.run();
+                }
+                else if(input.equals("s")) {
                     simulator.singleStep();
                 }
-                else if(input.equals("r")) {
-                    simulator.run();
-                 }
             }
+            
             sc.close();
             fileInStrm.close();
-            
         }
         catch (Exception e)
         {

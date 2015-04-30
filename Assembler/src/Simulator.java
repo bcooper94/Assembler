@@ -20,25 +20,13 @@ public class Simulator {
     
     public Simulator() {
         PC = PC_START;
-        registers = new int[32];
+        registers = new int[32];        
         memory = new int[MEM_SIZE];
         endOfText = PC_START;
         cycleCount = 0;
         instructCount = 0;
         memoryRefs = 0;
     }
-    
-  /*  
-    private byte decToHex(int dec) {
-        byte hex;
-        if (dec >= 48 && dec <= 57) {
-            hex = (byte)(dec - 48);
-        }
-        else {
-            hex = (byte)(dec - 87);
-        }
-        return hex;
-    }*/
     
     /**
      * Load program and its data values.
@@ -48,17 +36,10 @@ public class Simulator {
         int dec;
         byte[] bytes = new byte[4];
         try{
-            //fill memory with opcodes
             for(int address = PC_START; input.available() != 0; address++) {
-            input.read(bytes);
-                //find an opcode from input
-                /*for(int ndx = 0; ndx < 4; ndx++) {
-                    bytes[ndx] = (byte)(input.read());
-                }*/
-
+                input.read(bytes);
                 memory[address] = byteArrToInt(bytes);
                 endOfText = address;
-           //   System.out.println(Integer.toBinaryString(byteArrToInt(bytes)));
             }
         }
         catch(IOException except) {
@@ -83,9 +64,6 @@ public class Simulator {
         int currPC = PC;
         Operation op;
         int instructCode = memory[PC++];
-
-        System.out.println(Integer.toBinaryString(accessMemory(currPC)));
-        System.out.println(accessMemory(currPC)); 
         
         op = Operation.getOperation(instructCode);
         
@@ -106,6 +84,7 @@ public class Simulator {
     public boolean singleStep() {
        boolean hadNext = executeNextInstruct();
        registerDump();
+       statsPrint();
        return hadNext;
     }
     
@@ -113,12 +92,18 @@ public class Simulator {
      * Run the rest of the program and print contents of every register upon completion.
      */
     public void run() {
-        boolean hasNext = true;
-        while(hasNext && (registers[2] != 10 /*|| 
-        Operation.getOperation(memory[PC]) != SYSCALL.getOperation*/)) {
-            hasNext = executeNextInstruct();
-        }
+        while(executeNextInstruct() && (registers[2] != 10 || 
+        Operation.getOperation(memory[PC]) != Operation.getOperation(0x0C)));
         registerDump();
+        statsPrint();
+    }
+    /**
+     * Print performacne statistics including number of instructions, Clock cycles and memory references
+     */
+    public void statsPrint() {
+        System.out.print("\nInstruction Count: " + instructCount +
+                         "\nClock cycles: " + cycleCount +
+                         "\nMemory References: " + memoryRefs + "\n");
     }
     
     /**
@@ -131,27 +116,11 @@ public class Simulator {
     /**
      * Convert a byte aray (little endian) to an int.
      */
-   /* public static int byteArrToInt(byte[] bytes) {
-        int newInt = bytes[7];
-        
-        newInt |= ((int)bytes[6]) << 4;
-        newInt |= ((int)bytes[5]) << 8;
-        newInt |= ((int)bytes[4]) << 12;
-        newInt |= ((int)bytes[3]) << 16;
-        newInt |= ((int)bytes[2]) << 20;
-        newInt |= ((int)bytes[1]) << 24;
-        newInt |= ((int)bytes[0]) << 28;
-        
-        return newInt;
-    }*/
-    
         public static int byteArrToInt(byte[] bytes) {
         int newInt = bytes[3];
-        
-        newInt |= ((int)bytes[2]) << 8;
-        newInt |= ((int)bytes[1]) << 16;
-        newInt |= ((int)bytes[0]) << 24;
-        
+        newInt += bytes[2] << 8;
+        newInt += bytes[1] << 16;
+        newInt += bytes[0] << 24;
         return newInt;
     }
     

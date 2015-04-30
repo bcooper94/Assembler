@@ -50,7 +50,6 @@ public class Program {
         try {
             for (Instruction instruct : instructions) {
                write.write(Integer.toHexString(instruct.getinstructCode()));
-              // write.println(Integer.toHexString(instruct.getinstructCode()));
             }
         }
         catch (Exception except) {

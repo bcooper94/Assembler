@@ -78,6 +78,8 @@ public class Simulator {
             op.apply(instructCode, registers, memory);
         }
         
+        instructCount++;
+        
         return PC <= endOfText;
     }
     

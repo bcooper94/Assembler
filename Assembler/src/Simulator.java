@@ -74,12 +74,19 @@ public class Simulator {
                 op.apply(instructCode, registers);
             }
         }
+        else if (op == Operation.BEQ || 
+                op == Operation.BNE) {
+            PC = op.apply(instructCode, registers, memory, PC);
+        }
         else if (op.getType() != InstructType.JUMP){
             op.apply(instructCode, registers, memory);
         }
         else {
             PC = op.apply(instructCode, registers, memory, PC);
         }
+        
+        instructCount++;
+        cycleCount += op.getCyclesPerInstruct();
         
         return PC <= endOfText;
     }

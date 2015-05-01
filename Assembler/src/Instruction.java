@@ -304,8 +304,9 @@ public class Instruction {
      */
     public static int jumpInstruction(Operation currOperation, String address, int curLine) {
         int bits = currOperation.getOpValue();
+        int offset = symbolTable.getOffset(address) == 0 ? Integer.parseInt(address) * 4 : curLine * 4 - symbolTable.getOffset(address) - 1;
 
-        bits |= symbolTable.getOffset(address) == 0 ? Integer.parseInt(address) * 4 : symbolTable.getOffset(address) - curLine * 4;
+        bits |= offset & 0x03FFFFFF;
 
         return bits;
     }

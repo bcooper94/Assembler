@@ -74,8 +74,11 @@ public class Simulator {
                 op.apply(instructCode, registers);
             }
         }
-        else {
+        else if (op.getType() != InstructType.JUMP){
             op.apply(instructCode, registers, memory);
+        }
+        else {
+            PC = op.apply(instructCode, registers, memory, PC);
         }
         
         return PC <= endOfText;

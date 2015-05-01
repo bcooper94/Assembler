@@ -26,14 +26,14 @@ public class Parser {
       try {
          Scanner scanner = new Scanner(rdr);
          while(scanner.hasNext()) {
-            line = scanner.nextLine();
-            if(Instruction.isInstruction(line)) {
-               lineNum++;
-            }
+            line = scanner.nextLine().split("#")[0].trim();
             if(line.contains(":")) {
                labelString = line.split(":")[0];
                symTab.addLabel(labelString, lineNum);
             }        
+            if(Instruction.isInstruction(line)) {
+                lineNum++;
+            }
          }
          scanner.close();
       }

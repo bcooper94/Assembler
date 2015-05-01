@@ -30,6 +30,7 @@ public class Program {
         ByteBuffer buffer;
 
         try {
+     //   System.out.print(" \n"+ instructions.size()+ " \n");
             for (Instruction instruct : instructions) {
                 buffer = ByteBuffer.allocate(4);
                 buffer.putInt(instruct.getinstructCode());

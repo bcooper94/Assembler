@@ -36,6 +36,7 @@ public class Instruction {
         operations.put("jr", Operation.JR);
         operations.put("jal", Operation.JAL);
         operations.put("lui", Operation.LUI);
+        operations.put("syscall", Operation.SYSCALL);
 
         registers.put("$zero", 0);
         registers.put("$0", 0);
@@ -156,6 +157,7 @@ public class Instruction {
         Operation currOperation;
         String instructionName;
         String[] arguments = line.split(",");
+        int instructCode = 0;
         
         if (line.contains(":")) {
             instructionName = line.split(":")[1].trim().split("\\s+")[0];
@@ -163,7 +165,11 @@ public class Instruction {
         else {
             instructionName = line.split("\\s+")[0].trim();
         }
-        int instructCode = 0;
+        
+        // Syscall special case
+        if (instructionName.equals("syscall")) {
+            return 0xFC000000;
+        }
 
         if (arguments.length > 1) {
             arguments[0] = arguments[0].substring(arguments[0].indexOf("$"), arguments[0].length()).trim();

@@ -136,25 +136,27 @@ public enum Operation {
     },
     
     J(0x08000000, InstructType.JUMP, 1) {
-        public void apply(int instructCode, int[] regs, int[] memory) {
-//            return instructCode & 0x3FFFFFF;
+        public int apply(int instructCode, int[] regs, int[] memory, int pc) {
+            return instructCode & 0x03FFFFFF;
         }
     },
     
     JR(0x08, InstructType.REGISTER, 1) {
-        public void apply(int instructCode, int[] regs, int[] memory) {
-//            return 0;
+        public int apply(int instructCode, int[] regs, int[] memory, int pc) {
+            return getRSReg(instructCode);
         }
     },
     
     JAL(0x0C000000, InstructType.JUMP, 1) {
-        public void apply(int instructCode, int[] regs, int[] memory) {
-//            return 0;
+        public int apply(int instructCode, int[] regs, int[] memory, int pc) {
+            regs[31] = pc;
+            return instructCode & 0x03FFFFFF;
         }
     },
     
-    SYSCALL(0x0C, InstructType.REGISTER, 0) {
+    SYSCALL(0xFC000000, InstructType.REGISTER, 0) {
         public void apply(int instructCode, int[] regs, int[] memory) {
+            System.out.println(regs[4]);
         }
     };
     
@@ -228,6 +230,10 @@ public enum Operation {
      * @param memory   Array of all memory.
      */
     public void apply(int instructCode, int[] regs, int[] memory) {
+        throw new UnsupportedOperationException();
+    }
+    
+    public int apply(int instructCode, int[] regs, int[] memory, int pc) {
         throw new UnsupportedOperationException();
     }
     

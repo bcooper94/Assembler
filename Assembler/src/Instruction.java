@@ -169,6 +169,9 @@ public class Instruction {
             arguments[0] = arguments[0].substring(arguments[0].indexOf("$"), arguments[0].length()).trim();
         }
         else {
+            if (arguments[0].contains(":")) {
+                arguments[0] = arguments[0].split(":")[1].trim();
+            }
             arguments[0] = arguments[0].split("\\s+")[1];
         }
         if(operations.containsKey(instructionName)) {

@@ -5,7 +5,7 @@ TODO:
 
 Brandon:
 - Count Clock Cycles
-- .data in Sumulator
+- .data in Simulator
 - new Operations = JR, JAL... (see what is needed in countbits.asm)
    
 Daniel:

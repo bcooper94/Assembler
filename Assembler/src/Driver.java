@@ -17,7 +17,7 @@ public class Driver {
     public static void main(String args[]) {
         String fileName = "instructionBits";
         try {
-            File file = new File("test2.asm");
+            File file = new File("countbits_benchmark.asm");
             Parser parser = new Parser();
 
             //pass 1 = labelsB

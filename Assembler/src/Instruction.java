@@ -35,6 +35,7 @@ public class Instruction {
         operations.put("j", Operation.J);
         operations.put("jr", Operation.JR);
         operations.put("jal", Operation.JAL);
+        operations.put("lui", Operation.LUI);
 
         registers.put("$zero", 0);
         registers.put("$0", 0);
@@ -154,14 +155,13 @@ public class Instruction {
         String[] arrNotation;
         Operation currOperation;
         String instructionName;
-        String formatted = line.split("#")[0].trim();
-        String[] arguments = formatted.split(",");
+        String[] arguments = line.split(",");
         
-        if (formatted.contains(":")) {
-            instructionName = formatted.split(":")[1].trim().split("\\s+")[0];
+        if (line.contains(":")) {
+            instructionName = line.split(":")[1].trim().split("\\s+")[0];
         }
         else {
-            instructionName = formatted.split("\\s+")[0].trim();
+            instructionName = line.split("\\s+")[0].trim();
         }
         int instructCode = 0;
 
@@ -177,6 +177,10 @@ public class Instruction {
 
             for(int ndx = 0; ndx < arguments.length; ndx++) {
                 arguments[ndx] = arguments[ndx].trim();
+                if (arguments[ndx].contains("0x")) {
+                    arguments[ndx] = arguments[ndx].substring(arguments[ndx].indexOf("x") + 1);
+                    arguments[ndx] = "" + Integer.parseInt(arguments[ndx], 16);
+                }
             }
 
             if(currOperation.getType() == InstructType.REGISTER) {
@@ -200,9 +204,12 @@ public class Instruction {
                     instructCode |= immedInstruction(
                             currOperation, arguments[0], arrNotation[1], Integer.parseInt(arrNotation[0]));
                 }
-                else {
+                else if (currOperation != Operation.LUI){
                     instructCode |= immedInstruction(
                             currOperation, arguments[0], arguments[1], arguments[2], lineNum);
+                }
+                else {
+                    instructCode |= immedInstruction(currOperation, "$0", arguments[0], arguments[1], lineNum);
                 }
             }
             else if(currOperation.getType() == InstructType.JUMP){

@@ -198,7 +198,11 @@ public enum Operation {
     }
     
     public static Operation getOperation(int instructCode) {
-        return opMap.get(instructCode & 0xFC00003F);
+        if ((instructCode & 0xFC000000) > 0) {
+            return opMap.get(instructCode & 0xFC000000);
+        }
+        
+        return opMap.get(instructCode & 0x0000003F);
     }
     
     /**

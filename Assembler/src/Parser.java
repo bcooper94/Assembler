@@ -61,8 +61,9 @@ public class Parser {
          
          while(scanner.hasNext()) {
             line = scanner.nextLine();
-            if (Instruction.isInstruction(line)) {
-                currInstruction = new Instruction(line, lineNum);
+            String formatted = line.split("#")[0].trim();
+            if (Instruction.isInstruction(formatted)) {
+                currInstruction = new Instruction(formatted, lineNum);
                 program.addInstruction(currInstruction);
                 lineNum++;
             }

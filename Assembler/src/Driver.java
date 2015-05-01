@@ -16,7 +16,11 @@ public class Driver {
     public static void main(String args[]) {
         String fileName = "instructionBits";
         try {
+<<<<<<< HEAD
             File file = new File("test.asm");
+=======
+            File file = new File("countbits_benchmark.asm");
+>>>>>>> dcf7a8109fa1917baaf3be2d0e05c3fdc9f19606
             Parser parser = new Parser();
 
             //pass 1 = labelsB
@@ -33,6 +37,7 @@ public class Driver {
             
             FileOutputStream fileOutStrm = new FileOutputStream(fileName);
             program.writeObjectFile(fileOutStrm);
+            fileOutStrm.close();
             
             FileInputStream fileInStrm = new FileInputStream(fileName);
             Simulator simulator = new Simulator();

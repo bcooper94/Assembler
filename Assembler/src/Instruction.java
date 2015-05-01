@@ -20,6 +20,7 @@ public class Instruction {
         operations.put("or", Operation.OR);
         operations.put("add", Operation.ADD);
         operations.put("addu", Operation.ADDU);
+        operations.put("addi", Operation.ADDI);
         operations.put("sll", Operation.SLL);
         operations.put("srl", Operation.SRL);
         operations.put("sra", Operation.SRA);
@@ -35,6 +36,7 @@ public class Instruction {
         operations.put("j", Operation.J);
         operations.put("jr", Operation.JR);
         operations.put("jal", Operation.JAL);
+        operations.put("lui", Operation.LUI);
 
         registers.put("$zero", 0);
         registers.put("$0", 0);
@@ -153,18 +155,33 @@ public class Instruction {
     private int parseInstruction(String line, int lineNum) {
         String[] arrNotation;
         Operation currOperation;
-        String formatted = line.split("#")[0].trim();
-        String[] arguments = formatted.split(",");
-        String instructionName = formatted.split("\\s+")[0].trim();
+        String instructionName;
+        String[] arguments = line.split(",");
+        
+        if (line.contains(":")) {
+            instructionName = line.split(":")[1].trim().split("\\s+")[0];
+        }
+        else {
+            instructionName = line.split("\\s+")[0].trim();
+        }
         int instructCode = 0;
 
-        arguments[0] = arguments[0].split("\\s+")[1];
+        if (arguments.length > 1) {
+            arguments[0] = arguments[0].substring(arguments[0].indexOf("$"), arguments[0].length()).trim();
+        }
+        else {
+            arguments[0] = arguments[0].split("\\s+")[1];
+        }
         if(operations.containsKey(instructionName)) {
             currOperation = operations.get(instructionName);
             instructCode |= currOperation.getOpValue();
 
             for(int ndx = 0; ndx < arguments.length; ndx++) {
                 arguments[ndx] = arguments[ndx].trim();
+                if (arguments[ndx].contains("0x")) {
+                    arguments[ndx] = arguments[ndx].substring(arguments[ndx].indexOf("x") + 1);
+                    arguments[ndx] = "" + Integer.parseInt(arguments[ndx], 16);
+                }
             }
 
             if(currOperation.getType() == InstructType.REGISTER) {
@@ -188,9 +205,12 @@ public class Instruction {
                     instructCode |= immedInstruction(
                             currOperation, arguments[0], arrNotation[1], Integer.parseInt(arrNotation[0]));
                 }
-                else {
+                else if (currOperation != Operation.LUI){
                     instructCode |= immedInstruction(
                             currOperation, arguments[0], arguments[1], arguments[2], lineNum);
+                }
+                else {
+                    instructCode |= immedInstruction(currOperation, "$0", arguments[0], arguments[1], lineNum);
                 }
             }
             else if(currOperation.getType() == InstructType.JUMP){
@@ -212,10 +232,16 @@ public class Instruction {
     public static int regInstruction(
             Operation currOperation, String rd, String rs, String rt) {   
         int bits = currOperation.getOpValue();
-        bits += registers.get(rd) << 11;
-        bits += registers.get(rt) << 16;
-        bits += registers.get(rs) << 21;
-        
+
+        bits |= registers.get(rd) << 11;
+        bits |= registers.get(rs) << 21;
+        if (currOperation.name().equals("SLL")) {
+            bits |= Integer.parseInt(rt) << 6;
+        }
+        else {
+            bits |= registers.get(rt) << 16;
+        }
+
         return bits;
     }
 
@@ -231,8 +257,8 @@ public class Instruction {
             Operation currOperation, String rs, String rt, String immed, int curLine) {
         int bits = currOperation.getOpValue();
 
-        if (immed.matches("[0-9]+")) {
-            bits |= Integer.parseInt(immed);
+        if (immed.matches("-?[0-9]+")) {
+            bits |= Integer.parseInt(immed) & 0xFFFF;
         }
         else {
             bits |= (symbolTable.getOffset(immed) - curLine) & 0xFFFF;

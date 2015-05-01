@@ -20,6 +20,7 @@ public class Instruction {
         operations.put("or", Operation.OR);
         operations.put("add", Operation.ADD);
         operations.put("addu", Operation.ADDU);
+        operations.put("addi", Operation.ADDI);
         operations.put("sll", Operation.SLL);
         operations.put("srl", Operation.SRL);
         operations.put("sra", Operation.SRA);
@@ -152,13 +153,25 @@ public class Instruction {
     private int parseInstruction(String line, int lineNum) {
         String[] arrNotation;
         Operation currOperation;
+        String instructionName;
         String formatted = line.split("#")[0].trim();
         String[] arguments = formatted.split(",");
-        String instructionName = formatted.split("\\s+")[0].trim();
+        
+        if (formatted.contains(":")) {
+            instructionName = formatted.split(":")[1].trim().split("\\s+")[0];
+        }
+        else {
+            instructionName = formatted.split("\\s+")[0].trim();
+        }
 //        String instructionName = formatted.substring(0, formatted.indexOf("$")).trim();
         int instructCode = 0;
 
-        arguments[0] = arguments[0].split("\\s+")[1];
+        if (arguments.length > 1) {
+            arguments[0] = arguments[0].substring(arguments[0].indexOf("$"), arguments[0].length()).trim();
+        }
+        else {
+            arguments[0] = arguments[0].split("\\s+")[1];
+        }
         if(operations.containsKey(instructionName)) {
             currOperation = operations.get(instructionName);
             instructCode |= currOperation.getOpValue();
@@ -217,8 +230,13 @@ public class Instruction {
         int bits = currOperation.getOpValue();
 
         bits |= registers.get(rd) << 11;
-        bits |= registers.get(rt) << 16;
         bits |= registers.get(rs) << 21;
+        if (currOperation.name().equals("SLL")) {
+            bits |= Integer.parseInt(rt) << 6;
+        }
+        else {
+            bits |= registers.get(rt) << 16;
+        }
 
         return bits;
     }
@@ -235,8 +253,8 @@ public class Instruction {
             Operation currOperation, String rs, String rt, String immed, int curLine) {
         int bits =  currOperation.getOpValue();
 
-        if (immed.matches("[0-9]+")) {
-            bits |= Integer.parseInt(immed);
+        if (immed.matches("-?[0-9]+")) {
+            bits |= Integer.parseInt(immed) & 0xFFFF;
         }
         else {
             bits |= (symbolTable.getOffset(immed) - curLine) & 0xFFFF;

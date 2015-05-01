@@ -146,11 +146,10 @@ public class Simulator {
     }*/
     
         public static int byteArrToInt(byte[] bytes) {
-        int newInt = bytes[3];
-        
-        newInt |= ((int)bytes[2]) << 8;
-        newInt |= ((int)bytes[1]) << 16;
-        newInt |= ((int)bytes[0]) << 24;
+          int newInt = (bytes[0] & 0xFF) << 24;
+          newInt |= (((int)bytes[1]) & 0xFF) << 16;
+          newInt |= (((int)bytes[2]) & 0xFF) << 8;
+          newInt |= ((int)bytes[3]) & 0xFF;
         
         return newInt;
     }

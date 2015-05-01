@@ -38,6 +38,7 @@ public class Driver {
             
             FileOutputStream fileOutStrm = new FileOutputStream(fileName);
             program.writeObjectFile(fileOutStrm);
+            fileOutStrm.close();
             
             FileInputStream fileInStrm = new FileInputStream(fileName);
             

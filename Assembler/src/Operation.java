@@ -153,7 +153,7 @@ public enum Operation {
         }
     },
     
-    SYSCALL(0x0C, InstructType.REGISTER) {
+    SYSCALL(0x0C, InstructType.REGISTER, 0) {
         public void apply(int instructCode, int[] regs, int[] memory) {
         }
     };

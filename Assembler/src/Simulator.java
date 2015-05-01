@@ -2,7 +2,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Arrays;
 import java.io.IOException;
-//import java.io.Integer;
+import java.util.Scanner;
 
 /**
  * A MIPS simulator.
@@ -48,6 +48,33 @@ public class Simulator {
     }
     
     /**
+     * Simulation starts.
+     */
+    public void simulate() {
+        Scanner sc = new Scanner(System.in);
+        String input = " ";
+        System.out.println("s for a single step\n" + 
+                           "r for a run\n" + 
+                           "e to exit\n");
+        
+        while(!input.equals("e") && (registers[2] != 0xA0000 /*|| 
+            Operation.getOperation(memory[PC]) != Operation.getOperation(0x0C)*/)) {   
+            input = sc.next();
+                
+            if(input.equals("r")) {
+                run();
+            }
+            else if(input.equals("s")) {
+                singleStep();
+            }
+            //System.out.print(registers[2]);
+        }
+        
+        sc.close();
+    }
+    
+    
+    /**
      * Access memory at address.
      * @param address  Address to access.
      * @return Contents at <code>address.</code>
@@ -61,11 +88,9 @@ public class Simulator {
      * @param instructCode
      */
     private boolean executeNextInstruct() {
-        int currPC = PC;
-        Operation op;
+       // System.out.print("\n" + Integer.toBinaryString(memory[PC]));
         int instructCode = memory[PC++];
-        
-        op = Operation.getOperation(instructCode);
+        Operation op = Operation.getOperation(instructCode);
         
         if(op.getType() == InstructType.REGISTER) {
             op.apply(instructCode, registers);
@@ -73,6 +98,8 @@ public class Simulator {
         else {
             op.apply(instructCode, registers, memory);
         }
+        
+        instructCount++;
         
         return PC <= endOfText;
     }
@@ -92,8 +119,8 @@ public class Simulator {
      * Run the rest of the program and print contents of every register upon completion.
      */
     public void run() {
-        while(executeNextInstruct() && (registers[2] != 10 || 
-        Operation.getOperation(memory[PC]) != Operation.getOperation(0x0C)));
+        while(executeNextInstruct() /*&& (registers[2] != 0xA0000 || 
+            Operation.getOperation(memory[PC]) != Operation.getOperation(0x0C))*/);
         registerDump();
         statsPrint();
     }

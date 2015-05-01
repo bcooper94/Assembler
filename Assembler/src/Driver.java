@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.util.Scanner;
 
 /**
  * A driver for the assembler program.
@@ -17,7 +16,7 @@ public class Driver {
     public static void main(String args[]) {
         String fileName = "instructionBits";
         try {
-            File file = new File("test2.asm");
+            File file = new File("test.asm");
             Parser parser = new Parser();
 
             //pass 1 = labelsB
@@ -38,25 +37,8 @@ public class Driver {
             FileInputStream fileInStrm = new FileInputStream(fileName);
             Simulator simulator = new Simulator();
             simulator.loadProgram(fileInStrm);
+            simulator.simulate();
             
-            Scanner sc = new Scanner(System.in);
-            String input = " ";
-            System.out.println("s for a single step\n" + 
-                               "r for a run\n" + 
-                               "e to exit\n");
-                                    
-            while(!input.equals("e")) {   
-                input = sc.next();
-                
-                if(input.equals("r")) {
-                    simulator.run();
-                }
-                else if(input.equals("s")) {
-                    simulator.singleStep();
-                }
-            }
-            
-            sc.close();
             fileInStrm.close();
         }
         catch (Exception e)

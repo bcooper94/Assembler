@@ -51,15 +51,15 @@ public class Parser {
    public Program parseInstructions(Reader rdr) {
       int lineNum = 1;
       String line;
-      String instructionName;
       Instruction currInstruction;
       Program program = new Program();
-      
+
       try {
          Scanner scanner = new Scanner(rdr);
          
          while(scanner.hasNext()) {
             line = scanner.nextLine();
+
             if (Instruction.isInstruction(line)) {
                 currInstruction = new Instruction(line, lineNum);
                 program.addInstruction(currInstruction);

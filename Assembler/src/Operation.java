@@ -103,7 +103,7 @@ public enum Operation {
             if (regs[getRSReg(instructCode)] == regs[getRTReg(instructCode)]) {
                 newPC += getImmediate(instructCode);
             }
-            return newPC;
+            return newPC + 1;
         }
     },
     
@@ -114,7 +114,7 @@ public enum Operation {
             if (regs[getRSReg(instructCode)] == regs[getRTReg(instructCode)]) {
                 newPC += signExtendImmediate((getImmediate(instructCode)));
             }
-            return newPC;
+            return newPC - 1;
         }
     },
     

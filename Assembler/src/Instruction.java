@@ -163,7 +163,6 @@ public class Instruction {
         else {
             instructionName = formatted.split("\\s+")[0].trim();
         }
-//        String instructionName = formatted.substring(0, formatted.indexOf("$")).trim();
         int instructCode = 0;
 
         if (arguments.length > 1) {
@@ -180,16 +179,13 @@ public class Instruction {
                 arguments[ndx] = arguments[ndx].trim();
             }
 
-            // System.out.print(instructionName);
-            // System.out.print(Arrays.toString(arguments));
-
             if(currOperation.getType() == InstructType.REGISTER) {
                 // special case: JR operation
                 if (currOperation == Operation.JR) {
                     instructCode |= regInstruction(currOperation, "$0", arguments[0], "$0");
                 }
                 else {
-                instructCode |= regInstruction(
+                    instructCode |= regInstruction(
                         currOperation, arguments[0], arguments[1], arguments[2]);
                 }
             }
@@ -226,7 +222,7 @@ public class Instruction {
      * @return instruction code for a register type instruction.
      */
     public static int regInstruction(
-            Operation currOperation, String rd, String rs, String rt) {
+            Operation currOperation, String rd, String rs, String rt) {   
         int bits = currOperation.getOpValue();
 
         bits |= registers.get(rd) << 11;
@@ -251,7 +247,7 @@ public class Instruction {
      */
     public static int immedInstruction(
             Operation currOperation, String rs, String rt, String immed, int curLine) {
-        int bits =  currOperation.getOpValue();
+        int bits = currOperation.getOpValue();
 
         if (immed.matches("-?[0-9]+")) {
             bits |= Integer.parseInt(immed) & 0xFFFF;

@@ -17,6 +17,7 @@ public class Driver {
     public static void main(String args[]) {
         String fileName = "instructionBits";
         try {
+            boolean running = true;
             File file = new File("countbits_benchmark.asm");
             Parser parser = new Parser();
 
@@ -46,14 +47,14 @@ public class Driver {
                                "r for a run\n" + 
                                "e to exit\n");
                                     
-            while(!input.equals("e")) {   
+            while(running && !input.equals("e")) {   
                 input = sc.next();
                 
                 if(input.equals("r")) {
                     simulator.run();
                 }
                 else if(input.equals("s")) {
-                    simulator.singleStep();
+                    running = simulator.singleStep();
                 }
             }
             

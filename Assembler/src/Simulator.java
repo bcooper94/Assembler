@@ -61,14 +61,18 @@ public class Simulator {
      * @param instructCode
      */
     private boolean executeNextInstruct() {
-        int currPC = PC;
         Operation op;
         int instructCode = memory[PC++];
         
         op = Operation.getOperation(instructCode);
         
         if(op.getType() == InstructType.REGISTER) {
-            op.apply(instructCode, registers);
+            if (op == Operation.JR) {
+                op.apply(instructCode, registers, memory);
+            }
+            else {
+                op.apply(instructCode, registers);
+            }
         }
         else {
             op.apply(instructCode, registers, memory);

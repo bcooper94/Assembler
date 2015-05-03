@@ -65,7 +65,6 @@ public class Simulator {
         int instructCode = memory[PC++];
         
         op = Operation.getOperation(instructCode);
-        System.out.println(op.name());
         
         if(op.getType() == InstructType.REGISTER) {
             if (op == Operation.JR) {
@@ -77,7 +76,7 @@ public class Simulator {
         }
         else if (op == Operation.BEQ || 
                 op == Operation.BNE) {
-            PC = op.apply(instructCode, registers, memory, PC);
+            PC = op.apply(instructCode, registers, memory, PC, this);
         }
         else if (op.getType() != InstructType.JUMP){
             op.apply(instructCode, registers, memory);
@@ -126,6 +125,10 @@ public class Simulator {
      */
     public void registerDump() {
         System.out.println("\n" + Arrays.toString(registers));
+    }
+    
+    public void branchNotTaken() {
+        cycleCount--;
     }
     
     /**

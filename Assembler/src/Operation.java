@@ -34,13 +34,13 @@ public enum Operation {
         }
     },
     
-    SLL(0x00, InstructType.REGISTER, 5) {
+    SLL(0x00, InstructType.REGISTER, 4) {
         public void apply(int instructCode, int[] regs) {
             regs[getRDReg(instructCode)] = regs[getRTReg(instructCode)] << getShamt(instructCode);
         }
     },
     
-    SRL(0x02, InstructType.REGISTER, 5) {
+    SRL(0x02, InstructType.REGISTER, 4) {
         public void apply(int instructCode, int[] regs) {
             int MASK = 0x80000000;
             
@@ -52,7 +52,7 @@ public enum Operation {
         }
     },
     
-    SRA(0x03, InstructType.REGISTER, 5) {
+    SRA(0x03, InstructType.REGISTER, 4) {
         public void apply(int instructCode, int[] regs) {
             regs[getRDReg(instructCode)] = regs[getRTReg(instructCode)] >> getShamt(instructCode);
         }
@@ -97,22 +97,28 @@ public enum Operation {
         }
     },
     
-    BEQ(0x10000000, InstructType.IMMEDIATE, 5) {
-        public int apply(int instructCode, int[] regs, int[] memory, int pc) {
+    BEQ(0x10000000, InstructType.IMMEDIATE, 4) {
+        public int apply(int instructCode, int[] regs, int[] memory, int pc, Simulator sim) {
             int newPC = pc;
             if (regs[getRSReg(instructCode)] == regs[getRTReg(instructCode)]) {
                 newPC += getImmediate(instructCode);
+            }
+            else {
+//                sim.branchNotTaken();
             }
             return newPC;
         }
     },
     
-    BNE(0x14000000, InstructType.IMMEDIATE, 5) {
-        public int apply(int instructCode, int[] regs, int[] memory, int pc) {
+    BNE(0x14000000, InstructType.IMMEDIATE, 4) {
+        public int apply(int instructCode, int[] regs, int[] memory, int pc, Simulator sim) {
             int newPC = pc;
             
             if (regs[getRSReg(instructCode)] != regs[getRTReg(instructCode)]) {
                 newPC += signExtendImmediate((getImmediate(instructCode)));
+            }
+            else {
+//                sim.branchNotTaken();
             }
             return newPC;
         }
@@ -124,31 +130,31 @@ public enum Operation {
         }
     },
     
-    LUI(0x3C000000, InstructType.IMMEDIATE, 5) {
+    LUI(0x3C000000, InstructType.IMMEDIATE, 4) {
         public void apply(int instructCode, int[] regs, int[] memory) {
             regs[getRTReg(instructCode)] = getImmediate(instructCode) << 16;
         }
     },
     
-    SW(0xAC000000, InstructType.IMMEDIATE, 5) {
+    SW(0xAC000000, InstructType.IMMEDIATE, 4) {
         public void apply(int instructCode, int[] regs, int[] memory) {
             memory[(getImmediate(instructCode)) + regs[getRSReg(instructCode)]] = regs[getRTReg(instructCode)];
         }
     },
     
-    J(0x08000000, InstructType.JUMP, 4) {
+    J(0x08000000, InstructType.JUMP, 3) {
         public int apply(int instructCode, int[] regs, int[] memory, int pc) {
             return signExtendJump(instructCode & 0x03FFFFFF);
         }
     },
     
-    JR(0x08, InstructType.REGISTER, 4) {
+    JR(0x08, InstructType.REGISTER, 3) {
         public int apply(int instructCode, int[] regs, int[] memory, int pc) {
             return regs[getRSReg(instructCode)];
         }
     },
     
-    JAL(0x0C000000, InstructType.JUMP, 4) {
+    JAL(0x0C000000, InstructType.JUMP, 3) {
         public int apply(int instructCode, int[] regs, int[] memory, int pc) {
             regs[31] = pc;
             return Simulator.PC_START + signExtendJump(instructCode & 0x03FFFFFF);
@@ -235,6 +241,11 @@ public enum Operation {
     }
     
     public int apply(int instructCode, int[] regs, int[] memory, int pc) {
+        throw new UnsupportedOperationException();
+    }
+    
+    /** Used for branch instructions */
+    public int apply(int instructCode, int[] regs, int[] memory, int pc, Simulator sim) {
         throw new UnsupportedOperationException();
     }
     

@@ -67,6 +67,7 @@ public class Driver {
         finally {
             sc.close();
             simulator.registerDump();
+            simulator.statsPrint();
         }
     }
 }

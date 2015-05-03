@@ -103,7 +103,7 @@ public enum Operation {
             if (regs[getRSReg(instructCode)] == regs[getRTReg(instructCode)]) {
                 newPC += getImmediate(instructCode);
             }
-            return newPC + 1;
+            return newPC;
         }
     },
     
@@ -111,10 +111,10 @@ public enum Operation {
         public int apply(int instructCode, int[] regs, int[] memory, int pc) {
             int newPC = pc;
             
-            if (regs[getRSReg(instructCode)] == regs[getRTReg(instructCode)]) {
+            if (regs[getRSReg(instructCode)] != regs[getRTReg(instructCode)]) {
                 newPC += signExtendImmediate((getImmediate(instructCode)));
             }
-            return newPC - 1;
+            return newPC;
         }
     },
     
@@ -144,20 +144,20 @@ public enum Operation {
     
     JR(0x08, InstructType.REGISTER, 4) {
         public int apply(int instructCode, int[] regs, int[] memory, int pc) {
-            return getRSReg(instructCode);
+            return regs[getRSReg(instructCode)];
         }
     },
     
     JAL(0x0C000000, InstructType.JUMP, 4) {
         public int apply(int instructCode, int[] regs, int[] memory, int pc) {
             regs[31] = pc;
-            return pc + signExtendJump(instructCode & 0x03FFFFFF);
+            return Simulator.PC_START + signExtendJump(instructCode & 0x03FFFFFF);
         }
     },
     
     SYSCALL(0xFC000000, InstructType.REGISTER, 0) {
-        public void apply(int instructCode, int[] regs, int[] memory) {
-            System.out.println(regs[4]);
+        public void apply(int instructCode, int[] regs) {
+            throw new RuntimeException("Finished running");
         }
     };
     
@@ -201,7 +201,7 @@ public enum Operation {
     }
     
     public static Operation getOperation(int instructCode) {
-        if ((instructCode & 0xFC000000) > 0) {
+        if ((instructCode & 0xFC000000) != 0) {
             return opMap.get(instructCode & 0xFC000000);
         }
         

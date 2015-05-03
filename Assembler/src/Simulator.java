@@ -8,7 +8,7 @@ import java.io.IOException;
  * A MIPS simulator.
  */
 public class Simulator {
-    private static final int PC_START = 200;
+    public static final int PC_START = 200;
     private static final int MEM_SIZE = 1000;
     private int PC;
     private int[] registers;
@@ -65,10 +65,11 @@ public class Simulator {
         int instructCode = memory[PC++];
         
         op = Operation.getOperation(instructCode);
+        System.out.println(op.name());
         
         if(op.getType() == InstructType.REGISTER) {
             if (op == Operation.JR) {
-                op.apply(instructCode, registers, memory);
+                PC = op.apply(instructCode, registers, memory, PC);
             }
             else {
                 op.apply(instructCode, registers);

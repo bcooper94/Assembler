@@ -43,7 +43,9 @@ public class Driver {
             FileInputStream fileInStrm = new FileInputStream(fileName);
             simulator.loadProgram(fileInStrm);
             fileInStrm.close();
+            simulator.simulate();
             
+            /*
             String input = " ";
             System.out.println("s for a single step\n" + 
                                "r for a run\n" + 
@@ -58,7 +60,7 @@ public class Driver {
                 else if(input.equals("s")) {
                     running = simulator.singleStep();
                 }
-            }
+            }*/
         }
         catch (Exception e)
         {

@@ -1,1 +1,6 @@
-/Driver.class
+/*.class
+/*.asm
+/*.swp
+/instructionBits
+/.gitignore~
+/*.asm

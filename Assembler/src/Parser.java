@@ -19,7 +19,7 @@ public class Parser {
     */
    public SymbolTable parseLabels(Reader rdr) {
       String line;
-      int lineNum = 1;
+      int lineNum = 0;
       String labelString;
       SymbolTable symTab = new SymbolTable();
       

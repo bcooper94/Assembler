@@ -2,13 +2,13 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Arrays;
 import java.io.IOException;
-//import java.io.Integer;
+import java.util.Scanner;
 
 /**
  * A MIPS simulator.
  */
 public class Simulator {
-    private static final int PC_START = 200;
+    public static final int PC_START = 200;
     private static final int MEM_SIZE = 1000;
     private int PC;
     private int[] registers;
@@ -57,6 +57,32 @@ public class Simulator {
     }
     
     /**
+      * Simulation starts.
+      */
+     public void simulate() {
+         Scanner sc = new Scanner(System.in);
+         String input = " ";
+         System.out.println("s for a single step\n" + 
+                            "r for a run\n" + 
+                            "e to exit\n");
+         
+         while(!input.equals("e") && (registers[2] != 0xA0000 /*|| 
+             Operation.getOperation(memory[PC]) != Operation.getOperation(0x0C)*/)) {   
+             input = sc.next();
+                 
+             if(input.equals("r")) {
+                 run();
+             }
+             else if(input.equals("s")) {
+                 singleStep();
+             }
+             //System.out.print(registers[2]);
+         }
+         
+         sc.close();
+     }
+    
+    /**
      * Execute a single instruction.
      * @param instructCode
      */
@@ -68,11 +94,15 @@ public class Simulator {
         
         if(op.getType() == InstructType.REGISTER) {
             if (op == Operation.JR) {
-                op.apply(instructCode, registers, memory);
+                PC = op.apply(instructCode, registers, memory, PC);
             }
             else {
                 op.apply(instructCode, registers);
             }
+        }
+        else if (op == Operation.BEQ || 
+                op == Operation.BNE) {
+            PC = op.apply(instructCode, registers, memory, PC, this);
         }
         else if (op.getType() != InstructType.JUMP){
             op.apply(instructCode, registers, memory);
@@ -82,7 +112,7 @@ public class Simulator {
         }
         
         instructCount++;
-        
+        cycleCount += op.getCyclesPerInstruct();
         return PC <= endOfText;
     }
     
@@ -120,6 +150,10 @@ public class Simulator {
      */
     public void registerDump() {
         System.out.println("\n" + Arrays.toString(registers));
+    }
+    
+    public void branchNotTaken() {
+        cycleCount--;
     }
     
     /**

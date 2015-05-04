@@ -15,7 +15,10 @@ public class Driver {
      * Driver for the assembler.
      */
     public static void main(String args[]) {
+        Scanner sc = new Scanner(System.in);
         String fileName = "instructionBits";
+        Simulator simulator = new Simulator();
+        
         try {
             boolean running = true;
             File file = new File("countbits_benchmark.asm");
@@ -38,10 +41,9 @@ public class Driver {
             fileOutStrm.close();
             
             FileInputStream fileInStrm = new FileInputStream(fileName);
-            Simulator simulator = new Simulator();
             simulator.loadProgram(fileInStrm);
+            fileInStrm.close();
             
-            Scanner sc = new Scanner(System.in);
             String input = " ";
             System.out.println("s for a single step\n" + 
                                "r for a run\n" + 
@@ -57,13 +59,15 @@ public class Driver {
                     running = simulator.singleStep();
                 }
             }
-            
-            sc.close();
-            fileInStrm.close();
         }
         catch (Exception e)
         {
-            System.out.print(e.getMessage());
+//            System.out.print(e.getMessage());
+        }
+        finally {
+            sc.close();
+            simulator.registerDump();
+            simulator.statsPrint();
         }
     }
 }

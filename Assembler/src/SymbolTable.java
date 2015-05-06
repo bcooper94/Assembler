@@ -11,7 +11,7 @@ public class SymbolTable {
     }
     
     /**
-     * Get the address offset.
+     * Get the address offset.w
      */
     public int getOffset(String label) {
         return table.get(label);

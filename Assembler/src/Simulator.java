@@ -48,6 +48,33 @@ public class Simulator {
     }
     
     /**
+     * Simulation starts.
+     */
+    public void simulate() {
+        Scanner sc = new Scanner(System.in);
+        String input = " ";
+        System.out.println("s for a single step\n" + 
+                           "r for a run\n" + 
+                           "e to exit\n");
+        
+        while(!input.equals("e") && (registers[2] != 0xA0000 /*|| 
+            Operation.getOperation(memory[PC]) != Operation.getOperation(0x0C)*/)) {   
+            input = sc.next();
+                
+            if(input.equals("r")) {
+                run();
+            }
+            else if(input.equals("s")) {
+                singleStep();
+            }
+            //System.out.print(registers[2]);
+        }
+        
+        sc.close();
+    }
+    
+    
+    /**
      * Access memory at address.
      * @param address  Address to access.
      * @return Contents at <code>address.</code>
@@ -57,40 +84,13 @@ public class Simulator {
     }
     
     /**
-      * Simulation starts.
-      */
-     public void simulate() {
-         Scanner sc = new Scanner(System.in);
-         String input = " ";
-         System.out.println("s for a single step\n" + 
-                            "r for a run\n" + 
-                            "e to exit\n");
-         
-         while(!input.equals("e") && (registers[2] != 0xA0000 /*|| 
-             Operation.getOperation(memory[PC]) != Operation.getOperation(0x0C)*/)) {   
-             input = sc.next();
-                 
-             if(input.equals("r")) {
-                 run();
-             }
-             else if(input.equals("s")) {
-                 singleStep();
-             }
-             //System.out.print(registers[2]);
-         }
-         
-         sc.close();
-     }
-    
-    /**
      * Execute a single instruction.
      * @param instructCode
      */
     private boolean executeNextInstruct() {
-        Operation op;
+
         int instructCode = memory[PC++];
-        
-        op = Operation.getOperation(instructCode);
+        Operation op = Operation.getOperation(instructCode);
         
         if(op.getType() == InstructType.REGISTER) {
             if (op == Operation.JR) {
@@ -112,7 +112,9 @@ public class Simulator {
         }
         
         instructCount++;
+        
         cycleCount += op.getCyclesPerInstruct();
+
         return PC <= endOfText;
     }
     
@@ -131,8 +133,8 @@ public class Simulator {
      * Run the rest of the program and print contents of every register upon completion.
      */
     public void run() {
-        while(executeNextInstruct() && (registers[2] != 10 || 
-        Operation.getOperation(memory[PC]) != Operation.getOperation(0x0C)));
+        while(executeNextInstruct() /*&& (registers[2] != 0xA0000 || 
+            Operation.getOperation(memory[PC]) != Operation.getOperation(0x0C))*/);
         registerDump();
         statsPrint();
     }

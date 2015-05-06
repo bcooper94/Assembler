@@ -132,6 +132,7 @@ public enum Operation {
     
     LUI(0x3C000000, InstructType.IMMEDIATE, 4) {
         public void apply(int instructCode, int[] regs, int[] memory) {
+            System.out.print("got to LUI");
             regs[getRTReg(instructCode)] = getImmediate(instructCode) << 16;
         }
     },

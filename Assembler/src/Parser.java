@@ -19,21 +19,22 @@ public class Parser {
     */
    public SymbolTable parseLabels(Reader rdr) {
       String line;
-      int lineNum = 1;
+      int lineNum = 0;
       String labelString;
       SymbolTable symTab = new SymbolTable();
       
       try {
          Scanner scanner = new Scanner(rdr);
          while(scanner.hasNext()) {
-            line = scanner.nextLine();
-            if(Instruction.isInstruction(line)) {
-               lineNum++;
-            }
+            line = scanner.nextLine().split("#")[0].trim();
             if(line.contains(":")) {
+               System.out.print(line+"\n");
                labelString = line.split(":")[0];
                symTab.addLabel(labelString, lineNum);
-            }        
+            }
+            if(Instruction.isInstruction(line)) {
+                lineNum++;
+            }
          }
          scanner.close();
       }
@@ -54,14 +55,13 @@ public class Parser {
       String line;
       Instruction currInstruction;
       Program program = new Program();
-
-     // try {
-      
+     
 //      try {
          Scanner scanner = new Scanner(rdr);
 
          while(scanner.hasNext()) {
             line = scanner.nextLine();
+            System.out.print(line+"\n");
             if (Instruction.isInstruction(line)) {
                 currInstruction = new Instruction(line, lineNum);
                 String formatted = line.split("#")[0].trim();

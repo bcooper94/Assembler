@@ -8,7 +8,7 @@ import java.util.Scanner;
  * A MIPS simulator.
  */
 public class Simulator {
-    private static final int PC_START = 200;
+    public static final int PC_START = 200;
     private static final int MEM_SIZE = 1000;
     private int PC;
     private int[] registers;
@@ -88,19 +88,33 @@ public class Simulator {
      * @param instructCode
      */
     private boolean executeNextInstruct() {
-       // System.out.print("\n" + Integer.toBinaryString(memory[PC]));
+
         int instructCode = memory[PC++];
         Operation op = Operation.getOperation(instructCode);
         
         if(op.getType() == InstructType.REGISTER) {
-            op.apply(instructCode, registers);
+            if (op == Operation.JR) {
+                PC = op.apply(instructCode, registers, memory, PC);
+            }
+            else {
+                op.apply(instructCode, registers);
+            }
+        }
+        else if (op == Operation.BEQ || 
+                op == Operation.BNE) {
+            PC = op.apply(instructCode, registers, memory, PC, this);
+        }
+        else if (op.getType() != InstructType.JUMP){
+            op.apply(instructCode, registers, memory);
         }
         else {
-            op.apply(instructCode, registers, memory);
+            PC = op.apply(instructCode, registers, memory, PC);
         }
         
         instructCount++;
         
+        cycleCount += op.getCyclesPerInstruct();
+
         return PC <= endOfText;
     }
     
@@ -138,6 +152,10 @@ public class Simulator {
      */
     public void registerDump() {
         System.out.println("\n" + Arrays.toString(registers));
+    }
+    
+    public void branchNotTaken() {
+        cycleCount--;
     }
     
     /**

@@ -16,8 +16,9 @@ public class Instruction {
         operations = new HashMap<String, Operation>(18);
         registers = new HashMap<String, Integer>();
 
-        operations.put("and", Operation.ADD);
+        operations.put("and", Operation.AND);
         operations.put("or", Operation.OR);
+        operations.put("ori", Operation.ORI);
         operations.put("add", Operation.ADD);
         operations.put("addu", Operation.ADDU);
         operations.put("addi", Operation.ADDI);
@@ -37,6 +38,7 @@ public class Instruction {
         operations.put("jr", Operation.JR);
         operations.put("jal", Operation.JAL);
         operations.put("lui", Operation.LUI);
+        operations.put("syscall", Operation.SYSCALL);
 
         registers.put("$zero", 0);
         registers.put("$0", 0);
@@ -157,6 +159,7 @@ public class Instruction {
         Operation currOperation;
         String instructionName;
         String[] arguments = line.split(",");
+        int instructCode = 0;
         
         if (line.contains(":")) {
             instructionName = line.split(":")[1].trim().split("\\s+")[0];
@@ -164,12 +167,19 @@ public class Instruction {
         else {
             instructionName = line.split("\\s+")[0].trim();
         }
-        int instructCode = 0;
+        
+        // Syscall special case
+        if (instructionName.equals("syscall")) {
+            return 0xFC000000;
+        }
 
         if (arguments.length > 1) {
             arguments[0] = arguments[0].substring(arguments[0].indexOf("$"), arguments[0].length()).trim();
         }
         else {
+            if (arguments[0].contains(":")) {
+                arguments[0] = arguments[0].split(":")[1].trim();
+            }
             arguments[0] = arguments[0].split("\\s+")[1];
         }
         if(operations.containsKey(instructionName)) {
@@ -210,7 +220,7 @@ public class Instruction {
                             currOperation, arguments[0], arguments[1], arguments[2], lineNum);
                 }
                 else {
-                    instructCode |= immedInstruction(currOperation, "$0", arguments[0], arguments[1], lineNum);
+                    instructCode |= immedInstruction(currOperation, arguments[0], "$0", arguments[1], lineNum);
                 }
             }
             else if(currOperation.getType() == InstructType.JUMP){
@@ -237,6 +247,7 @@ public class Instruction {
         bits |= registers.get(rs) << 21;
         if (currOperation.name().equals("SLL")) {
             bits |= Integer.parseInt(rt) << 6;
+            bits |= registers.get(rs) << 16;
         }
         else {
             bits |= registers.get(rt) << 16;
@@ -254,7 +265,7 @@ public class Instruction {
      * @return instruction code for an immediate type instruction.
      */
     public static int immedInstruction(
-            Operation currOperation, String rs, String rt, String immed, int curLine) {
+            Operation currOperation, String rt, String rs, String immed, int curLine) {
         int bits = currOperation.getOpValue();
 
         if (immed.matches("-?[0-9]+")) {
@@ -296,8 +307,9 @@ public class Instruction {
      */
     public static int jumpInstruction(Operation currOperation, String address, int curLine) {
         int bits = currOperation.getOpValue();
+        int offset = symbolTable.getOffset(address) == 0 ? Integer.parseInt(address) * 4 : symbolTable.getOffset(address);
 
-        bits |= symbolTable.getOffset(address) == 0 ? Integer.parseInt(address) * 4 : symbolTable.getOffset(address) - curLine * 4;
+        bits |= offset & 0x03FFFFFF;
 
         return bits;
     }

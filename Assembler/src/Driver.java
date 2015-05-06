@@ -17,16 +17,11 @@ public class Driver {
     public static void main(String args[]) {
         Scanner sc = new Scanner(System.in);
         String fileName = "instructionBits";
-
-      //  try {
-            //File file = new File("test.asm");
-
         Simulator simulator = new Simulator();
         
         try {
             boolean running = true;
             File file = new File("countbits_benchmark.asm");
-            
             Parser parser = new Parser();
 
             //pass 1 = labelsB
@@ -38,19 +33,19 @@ public class Driver {
 
             //pass 2 = instructions
             FileReader instRdr = new FileReader(file);
-            Program program = parser.parseInstructions(instRdr);        
+            Program program = parser.parseInstructions(instRdr);
             instRdr.close();
-
+            
             FileOutputStream fileOutStrm = new FileOutputStream(fileName);
             program.writeObjectFile(fileOutStrm);
             fileOutStrm.close();
             
             FileInputStream fileInStrm = new FileInputStream(fileName);
             simulator.loadProgram(fileInStrm);
-            //simulator.simulate();
             fileInStrm.close();
-
+            simulator.simulate();
             
+            /*
             String input = " ";
             System.out.println("s for a single step\n" + 
                                "r for a run\n" + 
@@ -65,17 +60,16 @@ public class Driver {
                 else if(input.equals("s")) {
                     running = simulator.singleStep();
                 }
-            }
+            }*/
         }
         catch (Exception e)
         {
 //            System.out.print(e.getMessage());
         }
-     /*   finally {
+        finally {
             sc.close();
             simulator.registerDump();
             simulator.statsPrint();
-        }*/
-        sc.close();
+        }
     }
 }

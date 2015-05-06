@@ -31,7 +31,6 @@ public class Instruction {
         operations.put("sltiu", Operation.SLTIU);
         operations.put("beq", Operation.BEQ);
         operations.put("bne", Operation.BNE);
-        operations.put("lui", Operation.LUI);
         operations.put("lw", Operation.LW);
         operations.put("sw", Operation.SW);
         operations.put("j", Operation.J);
@@ -142,7 +141,7 @@ public class Instruction {
         Iterator<String> keyIter = keySet.iterator();
 
         while (!isInstruct && keyIter.hasNext()) {
-          isInstruct = line.contains(keyIter.next());
+            isInstruct = line.contains(keyIter.next());
         }
 
         return isInstruct;

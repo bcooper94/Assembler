@@ -28,10 +28,9 @@ public class Parser {
          while(scanner.hasNext()) {
             line = scanner.nextLine().split("#")[0].trim();
             if(line.contains(":")) {
-               System.out.print(line+"\n");
                labelString = line.split(":")[0];
                symTab.addLabel(labelString, lineNum);
-            }
+            }        
             if(Instruction.isInstruction(line)) {
                 lineNum++;
             }
@@ -53,24 +52,21 @@ public class Parser {
    public Program parseInstructions(Reader rdr) throws IOException {
       int lineNum = 1;
       String line;
+      String instructionName;
       Instruction currInstruction;
       Program program = new Program();
-     
+      
 //      try {
          Scanner scanner = new Scanner(rdr);
-
+         
          while(scanner.hasNext()) {
             line = scanner.nextLine();
-            System.out.print(line+"\n");
-            if (Instruction.isInstruction(line)) {
-                currInstruction = new Instruction(line, lineNum);
-                String formatted = line.split("#")[0].trim();
-                if (Instruction.isInstruction(formatted)) {
-                    currInstruction = new Instruction(formatted, lineNum);
-                    program.addInstruction(currInstruction);
-                    lineNum++;
-                }
-             }
+            String formatted = line.split("#")[0].trim();
+            if (Instruction.isInstruction(formatted)) {
+                currInstruction = new Instruction(formatted, lineNum);
+                program.addInstruction(currInstruction);
+                lineNum++;
+            }
          }
          scanner.close();
 //      }
@@ -78,7 +74,7 @@ public class Parser {
 //      {
 //         System.out.print(e.getMessage());
 //      }
-
+      
       return program;
    }
 }

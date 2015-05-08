@@ -3,6 +3,7 @@ import java.util.HashMap;
 import java.util.Arrays;
 import java.io.IOException;
 import java.util.Scanner;
+import java.io.File;
 
 /**
  * A MIPS simulator.
@@ -28,11 +29,88 @@ public class Simulator {
         memoryRefs = 0;
     }
     
+    private String convertHex(String str) {
+        String result = str;
+        if (str.contains("0x")) {
+            result = str.substring(str.indexOf("x") + 1);
+        }
+        return result;
+    }
+    
+    private boolean dataDefines(int address, String[] args, SymbolTable symTab, int lineNum) {
+        boolean isData = false;
+        String dataDef = args[1];
+        String immed = "0";
+        String labelString;
+
+
+        if(dataDef.equals(".word") || dataDef.equals(".byte") ) {
+            immed = convertHex(args[2]);
+            memory[address] = Integer.parseInt(immed, 10);
+            labelString = args[0].split(":")[0];
+            symTab.addLabel(labelString, lineNum);
+           // System.out.print(memory[address] + "\n");
+            isData = true;
+        }
+        
+        return isData;
+    }
+    
+    public void loadData(File input, SymbolTable symTab) {
+
+        Scanner fileScan;
+        String line = " ";
+        String[] arguments;
+        int address = 0;
+        int lineNum = 0;
+        boolean isData;
+        
+        //System.out.print("beginning of load Data " + PC + "\n");
+        
+        try {
+            fileScan = new Scanner(input);
+
+           /* while(fileScan.hasNext() && !line.contains(".data")) {
+               line = fileScan.nextLine();
+            }*/
+            
+            address = endOfText;
+            
+            while(fileScan.hasNext() ) {
+                isData = false;
+                line = fileScan.nextLine();
+                //if(!line.contains(".text")) {
+                    line = line.split("#")[0].trim();
+                    if(line.contains(":")) {
+                        arguments = line.split("\\s+");
+                        //System.out.print(Arrays.toString(arguments));
+                        if(arguments.length > 1) {
+                            isData = dataDefines(address, arguments, symTab, lineNum);
+                            address++;
+                        }
+                        if(Instruction.isInstruction(line) || isData) {
+                            lineNum++;
+                        }
+                    }
+                //}
+            }
+            
+            fileScan.close();
+        }
+        catch(Exception e) {
+            System.out.print(e.getMessage());
+        }
+        
+       // System.out.print("end of load data " + address + "\n");
+        
+    }
+    
     /**
      * Load program and its data values.
      * @param input
      */
     public void loadProgram(InputStream input) {
+       // System.out.print("beginning of load program " + PC + "\n");
         int dec;
         byte[] bytes = new byte[4];
         try{
@@ -40,11 +118,14 @@ public class Simulator {
                 input.read(bytes);
                 memory[address] = byteArrToInt(bytes);
                 endOfText = address;
+                //PC++;
             }
         }
         catch(IOException except) {
            System.err.println("Unable to write buffer.");
         }
+        
+        //System.out.print("end of load program " + endOfText + "\n");
     }
     
     /**

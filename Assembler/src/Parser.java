@@ -18,18 +18,22 @@ public class Parser {
     * @return A populated symbol table for the assembler.
     */
    public SymbolTable parseLabels(Reader rdr) {
-      String line;
+      String line = " ";
       int lineNum = 0;
       String labelString;
       SymbolTable symTab = new SymbolTable();
+      String args[];
       
       try {
          Scanner scanner = new Scanner(rdr);
          while(scanner.hasNext()) {
-            line = scanner.nextLine().split("#")[0].trim();
+            line = scanner.nextLine().split("#")[0].trim(); 
             if(line.contains(":")) {
-               labelString = line.split(":")[0];
-               symTab.addLabel(labelString, lineNum);
+               args = line.split("\\s+");
+               if(!(args.length > 1 && (args[1].equals(".word") || args[1].equals(".byte")))) {
+                   labelString = line.split(":")[0];
+                   symTab.addLabel(labelString, lineNum);
+               }
             }        
             if(Instruction.isInstruction(line)) {
                 lineNum++;

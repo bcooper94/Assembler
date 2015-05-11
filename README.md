@@ -10,8 +10,10 @@ Brandon:
 * Public methods for incrementing Simulator PC.
 
 Daniel:
-* Change .data to start at memory index 0.
 * Create new Pipeline class with members for each step in pipeline. Can determine which instructions go through which step in the pipeline.
 * Which instructions (in the test file) have which steps in the pipeline.
 * When a branch/jump is taken, need to flush the pipeline.
 * Count wasted clock cycles (maybe)
+
+* Create multicycle type
+* Determine any special cases

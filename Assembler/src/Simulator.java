@@ -65,8 +65,6 @@ public class Simulator {
         int lineNum = 0;
         boolean isData;
         
-        //System.out.print("beginning of load Data " + PC + "\n");
-        
         try {
             fileScan = new Scanner(input);
 
@@ -74,7 +72,7 @@ public class Simulator {
                line = fileScan.nextLine();
             }*/
             
-            address = endOfText;
+            address = 0;
             
             while(fileScan.hasNext() ) {
                 isData = false;
@@ -101,7 +99,7 @@ public class Simulator {
             System.out.print(e.getMessage());
         }
         
-       // System.out.print("end of load data " + address + "\n");
+        //System.out.print("end of load data " + address + "\n");
         
     }
     

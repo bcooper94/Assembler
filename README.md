@@ -4,8 +4,7 @@ MIPS Instruction Assembler.
 TODO:
 
 Brandon:
-* Create interface for Cycle with a method "carryOut" that takes an Operation and the instructionCode.
-* Create new InstructionFetch, InstructionDecode, Execute, MemAccess, and WriteBack classes based on Cycle interface with "inbasket", "outbasket", and flags.
+* Create class for instructwrapper to hold instrcution and actually apply operation
 * Counter for each step of pipeline.
 * Public methods for incrementing Simulator PC.
 

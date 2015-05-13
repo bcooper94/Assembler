@@ -48,6 +48,27 @@ public class Simulator {
     }
     
     /**
+     * Retrieve the Simulator's memory.
+     */
+    public int[] getMemory() {
+        return memory;
+    }
+    
+    /**
+     * Retrieve the Simulator's registers.
+     */
+    public int[] getRegisters() {
+        return registers;
+    }
+    
+    /**
+     * Get the Simulator's PC.
+     */
+    public int getPC() {
+        return PC;
+    }
+    
+    /**
      * Access memory at address.
      * @param address  Address to access.
      * @return Contents at <code>address.</code>

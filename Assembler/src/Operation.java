@@ -173,10 +173,12 @@ public enum Operation {
     private static final int RD_MASK = 0x0000F800;
     private static final int SHAMT_MASK = 0x000007C0;
     private static final int FUNC_MASK = 0x0000003F;
+    
+    private static HashMap<Integer, Operation> opMap;
+    
     private final int opValue;
     private final InstructType type;
     private final MultiCycle cycleType;
-    private static HashMap<Integer, Operation> opMap;
     
     static {
         opMap = new HashMap<Integer, Operation>();
@@ -204,6 +206,13 @@ public enum Operation {
      */
     public InstructType getType() {
         return this.type;
+    }
+    
+    /**
+     * Get the MultiCycle type of the instruction.
+     */
+    public MultiCycle getCycleType() {
+        return cycleType;
     }
     
     public static Operation getOperation(int instructCode) {

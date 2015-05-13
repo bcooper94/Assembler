@@ -6,7 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.Scanner;
 
-/**
+/**https://github.com/dbarraca/Assembler
  * A driver for the assembler program.
  */
 public class Driver {
@@ -21,7 +21,7 @@ public class Driver {
         
         try {
             boolean running = true;
-            File file = new File("countbits_benchmark.asm");
+            File file = new File("countbits_benchmark2.asm");
             Parser parser = new Parser();
 
             //pass 1 = labelsB
@@ -42,25 +42,9 @@ public class Driver {
             
             FileInputStream fileInStrm = new FileInputStream(fileName);
             simulator.loadProgram(fileInStrm);
+            simulator.loadData(file, symTab);
             fileInStrm.close();
             simulator.simulate();
-            
-            /*
-            String input = " ";
-            System.out.println("s for a single step\n" + 
-                               "r for a run\n" + 
-                               "e to exit\n");
-                                    
-            while(running && !input.equals("e")) {   
-                input = sc.next();
-                
-                if(input.equals("r")) {
-                    simulator.run();
-                }
-                else if(input.equals("s")) {
-                    running = simulator.singleStep();
-                }
-            }*/
         }
         catch (Exception e)
         {

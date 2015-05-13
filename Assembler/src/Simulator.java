@@ -3,6 +3,7 @@ import java.util.HashMap;
 import java.util.Arrays;
 import java.io.IOException;
 import java.util.Scanner;
+import java.io.File;
 
 /**
  * A MIPS simulator.
@@ -28,11 +29,86 @@ public class Simulator {
         memoryRefs = 0;
     }
     
+    private String convertHex(String str) {
+        String result = str;
+        if (str.contains("0x")) {
+            result = str.substring(str.indexOf("x") + 1);
+        }
+        return result;
+    }
+    
+    private boolean dataDefines(int address, String[] args, SymbolTable symTab, int lineNum) {
+        boolean isData = false;
+        String dataDef = args[1];
+        String immed = "0";
+        String labelString;
+
+
+        if(dataDef.equals(".word") || dataDef.equals(".byte") ) {
+            immed = convertHex(args[2]);
+            memory[address] = Integer.parseInt(immed, 10);
+            labelString = args[0].split(":")[0];
+            symTab.addLabel(labelString, lineNum);
+           // System.out.print(memory[address] + "\n");
+            isData = true;
+        }
+        
+        return isData;
+    }
+    
+    public void loadData(File input, SymbolTable symTab) {
+
+        Scanner fileScan;
+        String line = " ";
+        String[] arguments;
+        int address = 0;
+        int lineNum = 0;
+        boolean isData;
+        
+        try {
+            fileScan = new Scanner(input);
+
+           /* while(fileScan.hasNext() && !line.contains(".data")) {
+               line = fileScan.nextLine();
+            }*/
+            
+            address = 0;
+            
+            while(fileScan.hasNext() ) {
+                isData = false;
+                line = fileScan.nextLine();
+                //if(!line.contains(".text")) {
+                    line = line.split("#")[0].trim();
+                    if(line.contains(":")) {
+                        arguments = line.split("\\s+");
+                        //System.out.print(Arrays.toString(arguments));
+                        if(arguments.length > 1) {
+                            isData = dataDefines(address, arguments, symTab, lineNum);
+                            address++;
+                        }
+                        if(Instruction.isInstruction(line) || isData) {
+                            lineNum++;
+                        }
+                    }
+                //}
+            }
+            
+            fileScan.close();
+        }
+        catch(Exception e) {
+            System.out.print(e.getMessage());
+        }
+        
+        //System.out.print("end of load data " + address + "\n");
+        
+    }
+    
     /**
      * Load program and its data values.
      * @param input
      */
     public void loadProgram(InputStream input) {
+       // System.out.print("beginning of load program " + PC + "\n");
         int dec;
         byte[] bytes = new byte[4];
         try{
@@ -40,12 +116,42 @@ public class Simulator {
                 input.read(bytes);
                 memory[address] = byteArrToInt(bytes);
                 endOfText = address;
+                //PC++;
             }
         }
         catch(IOException except) {
            System.err.println("Unable to write buffer.");
         }
+        
+        //System.out.print("end of load program " + endOfText + "\n");
     }
+    
+    /**
+     * Simulation starts.
+     */
+    public void simulate() {
+        Scanner sc = new Scanner(System.in);
+        String input = " ";
+        System.out.println("s for a single step\n" + 
+                           "r for a run\n" + 
+                           "e to exit\n");
+        
+        while(!input.equals("e") && (registers[2] != 0xA0000 /*|| 
+            Operation.getOperation(memory[PC]) != Operation.getOperation(0x0C)*/)) {   
+            input = sc.next();
+                
+            if(input.equals("r")) {
+                run();
+            }
+            else if(input.equals("s")) {
+                singleStep();
+            }
+            //System.out.print(registers[2]);
+        }
+        
+        sc.close();
+    }
+    
     
     /**
      * Retrieve the Simulator's memory.
@@ -78,40 +184,13 @@ public class Simulator {
     }
     
     /**
-      * Simulation starts.
-      */
-     public void simulate() {
-         Scanner sc = new Scanner(System.in);
-         String input = " ";
-         System.out.println("s for a single step\n" + 
-                            "r for a run\n" + 
-                            "e to exit\n");
-         
-         while(!input.equals("e") && (registers[2] != 0xA0000 /*|| 
-             Operation.getOperation(memory[PC]) != Operation.getOperation(0x0C)*/)) {   
-             input = sc.next();
-                 
-             if(input.equals("r")) {
-                 run();
-             }
-             else if(input.equals("s")) {
-                 singleStep();
-             }
-             //System.out.print(registers[2]);
-         }
-         
-         sc.close();
-     }
-    
-    /**
      * Execute a single instruction.
      * @param instructCode
      */
     private boolean executeNextInstruct() {
-        Operation op;
+
         int instructCode = memory[PC++];
-        
-        op = Operation.getOperation(instructCode);
+        Operation op = Operation.getOperation(instructCode);
         
         if(op.getType() == InstructType.REGISTER) {
             if (op == Operation.JR) {
@@ -133,7 +212,9 @@ public class Simulator {
         }
         
         instructCount++;
+        
         cycleCount += op.getCyclesPerInstruct();
+
         return PC <= endOfText;
     }
     
@@ -152,8 +233,8 @@ public class Simulator {
      * Run the rest of the program and print contents of every register upon completion.
      */
     public void run() {
-        while(executeNextInstruct() && (registers[2] != 10 || 
-        Operation.getOperation(memory[PC]) != Operation.getOperation(0x0C)));
+        while(executeNextInstruct() /*&& (registers[2] != 0xA0000 || 
+            Operation.getOperation(memory[PC]) != Operation.getOperation(0x0C))*/);
         registerDump();
         statsPrint();
     }

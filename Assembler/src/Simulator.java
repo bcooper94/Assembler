@@ -18,6 +18,7 @@ public class Simulator {
     private int cycleCount;
     private int instructCount;
     private int memoryRefs;
+    private PipeLine pipeLine;
     
     public Simulator() {
         PC = PC_START;
@@ -27,6 +28,81 @@ public class Simulator {
         cycleCount = 0;
         instructCount = 0;
         memoryRefs = 0;
+        pipeLine = new PipeLine(this);
+    }
+    
+    private String convertHex(String str) {
+        String result = str;
+        if (str.contains("0x")) {
+            result = str.substring(str.indexOf("x") + 1);
+        }
+        return result;
+    }
+    
+    private boolean dataDefines(int address, String[] args, SymbolTable symTab, int lineNum) {
+        boolean isData = false;
+        String dataDef = args[1];
+        String immed = "0";
+        String labelString;
+
+
+        if(dataDef.equals(".word") || dataDef.equals(".byte") ) {
+            immed = convertHex(args[2]);
+            memory[address] = Integer.parseInt(immed, 10);
+            labelString = args[0].split(":")[0];
+            symTab.addLabel(labelString, lineNum);
+           // System.out.print(memory[address] + "\n");
+            isData = true;
+        }
+        
+        return isData;
+    }
+    
+    public void loadData(File input, SymbolTable symTab) {
+
+        Scanner fileScan;
+        String line = " ";
+        String[] arguments;
+        int address = 0;
+        int lineNum = 0;
+        boolean isData;
+        
+        try {
+            fileScan = new Scanner(input);
+
+           /* while(fileScan.hasNext() && !line.contains(".data")) {
+               line = fileScan.nextLine();
+            }*/
+            
+            address = 0;
+            
+            while(fileScan.hasNext() ) {
+                isData = false;
+                line = fileScan.nextLine();
+                //if(!line.contains(".text")) {
+                    line = line.split("#")[0].trim();
+                    if(line.contains(":")) {
+                        arguments = line.split("\\s+");
+                        //System.out.print(Arrays.toString(arguments));
+                        if(arguments.length > 1) {
+                            isData = dataDefines(address, arguments, symTab, lineNum);
+                            address++;
+                        }
+                        if(Instruction.isInstruction(line) || isData) {
+                            lineNum++;
+                        }
+                    }
+                //}
+            }
+            
+            fileScan.close();
+        }
+        catch(Exception e) {
+            System.out.print(e.getMessage());
+        }
+        
+        //System.out.print("end of load data " + address + "\n");
+        
     }
     
     private String convertHex(String str) {
@@ -122,8 +198,6 @@ public class Simulator {
         catch(IOException except) {
            System.err.println("Unable to write buffer.");
         }
-        
-        //System.out.print("end of load program " + endOfText + "\n");
     }
     
     /**
@@ -152,6 +226,40 @@ public class Simulator {
         sc.close();
     }
     
+    /**
+     * Retrieve the Simulator's memory.
+     */
+    public int[] getMemory() {
+        return memory;
+    }
+    
+    /**
+     * Retrieve the Simulator's registers.
+     */
+    public int[] getRegisters() {
+        return registers;
+    }
+    
+    /**
+     * Get the Simulator's PC.
+     */
+    public int getPC() {
+        return PC;
+    }
+    
+    /**
+     * Set the Simulator's PC.
+     */
+    public void setPC(int newPC) {
+        PC = newPC;
+    }
+    
+    /**
+     * Get the Simulator's PipeLine.
+     */
+    public PipeLine getPipeLine() {
+        return pipeLine;
+    }
     
     /**
      * Retrieve the Simulator's memory.
@@ -188,8 +296,13 @@ public class Simulator {
      * @param instructCode
      */
     private boolean executeNextInstruct() {
-
+       // System.out.print(PC);
         int instructCode = memory[PC++];
+        pipeLine.pipe(instructCode);
+        pipeLine.chkFinished();
+        instructCount++;
+        
+        /*
         Operation op = Operation.getOperation(instructCode);
         
         if(op.getType() == InstructType.REGISTER) {
@@ -214,7 +327,7 @@ public class Simulator {
         instructCount++;
         
         cycleCount += op.getCyclesPerInstruct();
-
+        */
         return PC <= endOfText;
     }
     
@@ -233,8 +346,12 @@ public class Simulator {
      * Run the rest of the program and print contents of every register upon completion.
      */
     public void run() {
-        while(executeNextInstruct() /*&& (registers[2] != 0xA0000 || 
-            Operation.getOperation(memory[PC]) != Operation.getOperation(0x0C))*/);
+    
+        while(executeNextInstruct());
+        /*do {
+            executeNextInstruct();
+        } while(!pipeLine.isEmpty());
+        */
         registerDump();
         statsPrint();
     }

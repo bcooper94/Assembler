@@ -18,6 +18,7 @@ public class Simulator {
     private int cycleCount;
     private int instructCount;
     private int memoryRefs;
+    private PipeLine pipeLine;
     
     public Simulator() {
         PC = PC_START;
@@ -27,6 +28,7 @@ public class Simulator {
         cycleCount = 0;
         instructCount = 0;
         memoryRefs = 0;
+        pipeLine = new PipeLine(this);
     }
     
     private String convertHex(String str) {
@@ -123,7 +125,7 @@ public class Simulator {
            System.err.println("Unable to write buffer.");
         }
         
-        //System.out.print("end of load program " + endOfText + "\n");
+      //  System.out.print("end of load program " + endOfText + "\n");
     }
     
     /**
@@ -152,6 +154,40 @@ public class Simulator {
         sc.close();
     }
     
+    /**
+     * Retrieve the Simulator's memory.
+     */
+    public int[] getMemory() {
+        return memory;
+    }
+    
+    /**
+     * Retrieve the Simulator's registers.
+     */
+    public int[] getRegisters() {
+        return registers;
+    }
+    
+    /**
+     * Get the Simulator's PC.
+     */
+    public int getPC() {
+        return PC;
+    }
+    
+    /**
+     * Set the Simulator's PC.
+     */
+    public void setPC(int newPC) {
+        PC = newPC;
+    }
+    
+    /**
+     * Get the Simulator's PipeLine.
+     */
+    public PipeLine getPipeLine() {
+        return pipeLine;
+    }
     
     /**
      * Access memory at address.
@@ -167,8 +203,13 @@ public class Simulator {
      * @param instructCode
      */
     private boolean executeNextInstruct() {
-
+       // System.out.print(PC);
         int instructCode = memory[PC++];
+        pipeLine.pipe(instructCode);
+        pipeLine.chkFinished();
+        instructCount++;
+        
+        /*
         Operation op = Operation.getOperation(instructCode);
         
         if(op.getType() == InstructType.REGISTER) {
@@ -193,7 +234,7 @@ public class Simulator {
         instructCount++;
         
         cycleCount += op.getCyclesPerInstruct();
-
+        */
         return PC <= endOfText;
     }
     
@@ -212,8 +253,12 @@ public class Simulator {
      * Run the rest of the program and print contents of every register upon completion.
      */
     public void run() {
-        while(executeNextInstruct() /*&& (registers[2] != 0xA0000 || 
-            Operation.getOperation(memory[PC]) != Operation.getOperation(0x0C))*/);
+    
+        while(executeNextInstruct());
+        /*do {
+            executeNextInstruct();
+        } while(!pipeLine.isEmpty());
+        */
         registerDump();
         statsPrint();
     }

@@ -1,3 +1,19 @@
+Skip to content
+This repository  
+Explore
+Gist
+Blog
+Help
+@dbarraca dbarraca
+ 
+ Unwatch 2
+  Star 0
+  Fork 1
+bcooper94/Assembler
+ branch: master  Assembler/Assembler/src/InstructionTest.java
+@bcooper94bcooper94 9 minutes ago Working on multicycle
+1 contributor
+RawBlameHistory     40 lines (30 sloc)  1.443 kb
 import static org.junit.Assert.*;
 
 import org.junit.Test;
@@ -25,7 +41,7 @@ public class InstructionTest {
         
         //System.out.println(Operation.ADD.apply(0xFFFFFFFF));
         assertEquals(0x010A4820, Instruction.regInstruction(Operation.ADD, "$t1", "$t0", "$t2"));
-        assertEquals(0x26DD0029, Instruction.immedInstruction(Operation.ADDIU, "$sp", "$22", "stuff", 1));
+        assertEquals(0x26DD0028, Instruction.immedInstruction(Operation.ADDIU, "$sp", "$22", "stuff", 1));
         //assertEquals(0x, Instruction.immedInstruction(Operation.LW, "$a0", "$t5", 4));
     }
     
@@ -37,3 +53,5 @@ public class InstructionTest {
     }
 
 }
+Status API Training Shop Blog About
+© 2015 GitHub, Inc. Terms Privacy Security Contact

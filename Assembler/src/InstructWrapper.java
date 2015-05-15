@@ -31,6 +31,9 @@ public class InstructWrapper {
     public void apply() {
         InstructType type = operation.getType();
         
+        if (operation == Operation.NOP) {
+            return;
+        }
         if (operation == Operation.JR) {
             operation.apply(instructCode, sim.getRegisters(), sim.getMemory(), sim.getPC());
         }
@@ -52,27 +55,4 @@ public class InstructWrapper {
             operation.apply(instructCode, sim.getRegisters(), sim.getMemory(), sim.getPC());
         }
     }
-    
-    /**
-     * Carry out the step in the pipeline (IF, ID, EX, MEM/WB).
-     */
-    //public abstract void carryOut(Operation op, int instructionCode);
-    
-    /** 
-     * Determine if the cycle's in basket is available.
-     */
-    /*
-    public boolean ready() {
-        return ready;
-    }
-    */
-    
-    /**
-     * Get the number of times this step of the pipeline has been run.
-     */
-    /*
-    public int getCount() {
-        return cycleCount;
-    }
-    */
 }

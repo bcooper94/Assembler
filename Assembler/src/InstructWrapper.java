@@ -34,14 +34,22 @@ public class InstructWrapper {
         if (operation == Operation.JR) {
             operation.apply(instructCode, sim.getRegisters(), sim.getMemory(), sim.getPC());
         }
+        else if (operation == Operation.SYSCALL) {
+            operation.apply(instructCode, sim.getRegisters());
+        }
         else if (type == InstructType.REGISTER) {
             operation.apply(instructCode, sim.getRegisters());
         }
         else if (type == InstructType.IMMEDIATE) {
-            
+            if (operation == Operation.BEQ || operation == Operation.BNE) {
+                operation.apply(instructCode, sim.getRegisters(), sim.getMemory(), sim.getPC(), sim);
+            }
+            else {
+                operation.apply(instructCode, sim.getRegisters(), sim.getMemory());
+            }
         }
         else if (type == InstructType.JUMP) {
-
+            operation.apply(instructCode, sim.getRegisters(), sim.getMemory(), sim.getPC());
         }
     }
     

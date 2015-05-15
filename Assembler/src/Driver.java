@@ -21,7 +21,7 @@ public class Driver {
         
         try {
             boolean running = true;
-            File file = new File("countbits_benchmark.asm");
+            File file = new File("countbits_benchmark_pipeline.asm");
             Parser parser = new Parser();
 
             //pass 1 = labelsB

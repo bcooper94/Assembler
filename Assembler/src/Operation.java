@@ -190,7 +190,9 @@ public enum Operation {
         opMap = new HashMap<Integer, Operation>();
         
         for (Operation op : Operation.values()) {
-            opMap.put(op.opValue, op);
+            if (op != NOP) {
+                opMap.put(op.opValue, op);
+            }
         }
     }
     

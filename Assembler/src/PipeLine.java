@@ -43,6 +43,12 @@ public class PipeLine {
             instructWrappers[2] = null;
         }
         
+        if(instructWrappers[1] != null && instructWrappers[1].getCycleType() == MultiCycle.NOP) {
+            instructWrappers[1].apply();
+            instructWrappers[1] = null;
+        }
+
+        
 
     }
     

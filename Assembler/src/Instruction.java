@@ -38,6 +38,7 @@ public class Instruction {
         operations.put("jal", Operation.JAL);
         operations.put("lui", Operation.LUI);
         operations.put("syscall", Operation.SYSCALL);
+        operations.put("nop", Operation.NOP);
 
         registers.put("$zero", 0);
         registers.put("$0", 0);
@@ -170,6 +171,10 @@ public class Instruction {
         // Syscall special case
         if (instructionName.equals("syscall")) {
             return 0xFC000000;
+        }
+        // Implement NOP
+        else if (instructionName.equals("nop")) {
+            return 0;
         }
 
         if (arguments.length > 1) {

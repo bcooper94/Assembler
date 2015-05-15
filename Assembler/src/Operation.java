@@ -161,6 +161,12 @@ public enum Operation {
         }
     },
     
+    NOP(0x00000000, InstructType.REGISTER, MultiCycle.NOP) {
+        public void apply(int instructCode, int[] regs) {
+            
+        }
+    },
+    
     SYSCALL(0xFC000000, InstructType.REGISTER, MultiCycle.SYSCALL) {
         public void apply(int instructCode, int[] regs) {
             throw new RuntimeException("Finished running");
@@ -216,6 +222,9 @@ public enum Operation {
     }
     
     public static Operation getOperation(int instructCode) {
+        if (instructCode == 0) {
+            return NOP;
+        }
         if ((instructCode & 0xFC000000) != 0) {
             return opMap.get(instructCode & 0xFC000000);
         }

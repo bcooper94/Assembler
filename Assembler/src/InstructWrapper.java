@@ -25,6 +25,10 @@ public class InstructWrapper {
         return operation.getCycleType();
     }
     
+    public int getInstructCode() {
+        return instructCode;
+    }
+    
     /**
      * Apply the entire operation.
      */
@@ -35,7 +39,7 @@ public class InstructWrapper {
             return;
         }
         if (operation == Operation.JR) {
-            operation.apply(instructCode, sim.getRegisters(), sim.getMemory(), sim.getPC());
+            sim.setPC(operation.apply(instructCode, sim.getRegisters(), sim.getMemory(), sim.getPC()));
         }
         else if (operation == Operation.SYSCALL) {
             operation.apply(instructCode, sim.getRegisters());
@@ -45,14 +49,15 @@ public class InstructWrapper {
         }
         else if (type == InstructType.IMMEDIATE) {
             if (operation == Operation.BEQ || operation == Operation.BNE) {
-                operation.apply(instructCode, sim.getRegisters(), sim.getMemory(), sim.getPC(), sim);
+                sim.setPC(operation.apply(instructCode, sim.getRegisters(), sim.getMemory(), sim.getPC(), sim));
             }
             else {
                 operation.apply(instructCode, sim.getRegisters(), sim.getMemory());
             }
         }
         else if (type == InstructType.JUMP) {
-            operation.apply(instructCode, sim.getRegisters(), sim.getMemory(), sim.getPC());
+            //System.out.print("new PC should be "+operation.apply(instructCode, sim.getRegisters(), sim.getMemory(), sim.getPC())+"     ");
+            sim.setPC(operation.apply(instructCode, sim.getRegisters(), sim.getMemory(), sim.getPC()));
         }
     }
 }

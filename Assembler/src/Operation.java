@@ -157,6 +157,7 @@ public enum Operation {
     JAL(0x0C000000, InstructType.JUMP, MultiCycle.BRANCH) {
         public int apply(int instructCode, int[] regs, int[] memory, int pc) {
             regs[31] = pc;
+         //   System.out.print("current PC:"+Simulator.PC_START+"JAL jump:"+signExtendJump(instructCode & 0x03FFFFFF));
             return Simulator.PC_START + signExtendJump(instructCode & 0x03FFFFFF);
         }
     },

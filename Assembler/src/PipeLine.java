@@ -1,26 +1,23 @@
 public class PipeLine {
     public InstructWrapper[] instructWrappers;
     private Simulator sim;
+    private int cycleCount;
 
     public PipeLine(Simulator sim)
     {
         instructWrappers = new InstructWrapper[5];
         this.sim = sim;
+        cycleCount = 0;
     }
-    
     
     public void pipe(int newInstruct) {
-        //chkFinished();
         for (int idx = 3; idx >= 0; idx--) {
-         //  if(instructWrappers[idx + 1] != null) {
-               instructWrappers[idx + 1] = instructWrappers[idx];
-           //}
-          // System.out.print(instructWrappers[idx+1].getInstructCode());
+            instructWrappers[idx + 1] = instructWrappers[idx];
         }
         
+        cycleCount++;
         insert(newInstruct);
     }
-    
 
     public void chkFinished() {
         boolean clearPipe = false;
@@ -57,11 +54,14 @@ public class PipeLine {
     public void insert(int instructCode) {
         instructWrappers[0] = new InstructWrapper(instructCode);
         instructWrappers[0].setSimulator(sim);
+        
+        //System.out.print(sim.getPC()+" "+*/instructWrappers[0].getCycleType()+"\n");
     }
     
     //At start make sure to have one in so they are not all null
     public boolean isEmpty() {
         boolean isEmpty = true;
+
         for(int idx = 0; idx <= 4; idx++) {
            if(instructWrappers[idx] != null) {
               isEmpty = false;
@@ -69,5 +69,16 @@ public class PipeLine {
         }
         
         return isEmpty;
+    }
+    
+    public int getCycleCount() {
+       return cycleCount;
+    }
+    
+    private void clearPipe() {
+        instructWrappers = new InstructWrapper[5];
+        /*for(int idx = 0; idx < 4; idx++) {
+            instructWrappers[idx] = null;
+        } */
     }
 }

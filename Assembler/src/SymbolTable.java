@@ -23,7 +23,7 @@ public class SymbolTable {
      * @param lineNum   Offset that label appears at in the file.
      */
     public void addLabel(String label, int lineNum) {
-        //System.out.print(label + " " + lineNum+ "\n");
+        System.out.print(label + " " + lineNum+ "\n");
         table.put(label, lineNum);
     }
 }

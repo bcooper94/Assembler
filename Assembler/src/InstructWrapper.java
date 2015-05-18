@@ -25,6 +25,10 @@ public class InstructWrapper {
         return operation.getCycleType();
     }
     
+    public int getInstructCode() {
+        return instructCode;
+    }
+    
     /**
      * Apply the entire operation.
      */

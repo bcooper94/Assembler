@@ -28,14 +28,16 @@ public class InstructWrapper {
     /**
      * Apply the entire operation.
      */
-    public void apply() {
+    public boolean apply() {
+        boolean clearPipe = false;
         InstructType type = operation.getType();
         
         if (operation == Operation.NOP) {
-            return;
+            return false;
         }
         if (operation == Operation.JR) {
-            operation.apply(instructCode, sim.getRegisters(), sim.getMemory(), sim.getPC());
+            sim.setPC(operation.apply(instructCode, sim.getRegisters(), sim.getMemory(), sim.getPC()));
+            clearPipe = true;
         }
         else if (operation == Operation.SYSCALL) {
             operation.apply(instructCode, sim.getRegisters());
@@ -45,14 +47,22 @@ public class InstructWrapper {
         }
         else if (type == InstructType.IMMEDIATE) {
             if (operation == Operation.BEQ || operation == Operation.BNE) {
-                operation.apply(instructCode, sim.getRegisters(), sim.getMemory(), sim.getPC(), sim);
+                int curPC = sim.getPC();
+                int newPC = operation.apply(instructCode, sim.getRegisters(), sim.getMemory(), curPC, sim);
+                
+                sim.setPC(newPC);
+                
+                clearPipe = curPC != newPC;
             }
             else {
                 operation.apply(instructCode, sim.getRegisters(), sim.getMemory());
             }
         }
         else if (type == InstructType.JUMP) {
-            operation.apply(instructCode, sim.getRegisters(), sim.getMemory(), sim.getPC());
+            sim.setPC(operation.apply(instructCode, sim.getRegisters(), sim.getMemory(), sim.getPC()));
+            clearPipe = true;
         }
+        
+        return clearPipe;
     }
 }

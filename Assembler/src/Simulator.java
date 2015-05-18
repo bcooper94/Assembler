@@ -45,7 +45,6 @@ public class Simulator {
         String immed = "0";
         String labelString;
 
-
         if(dataDef.equals(".word") || dataDef.equals(".byte") ) {
             immed = convertHex(args[2]);
             memory[address] = Integer.parseInt(immed, 10);
@@ -203,10 +202,11 @@ public class Simulator {
      * @param instructCode
      */
     private boolean executeNextInstruct() {
-       // System.out.print(PC);
+        System.out.print(PC+" ");
         int instructCode = memory[PC++];
         pipeLine.pipe(instructCode);
         pipeLine.chkFinished();
+        
         instructCount++;
         
         /*
@@ -230,11 +230,11 @@ public class Simulator {
         else {
             PC = op.apply(instructCode, registers, memory, PC);
         }
-        
-        instructCount++;
-        
-        cycleCount += op.getCyclesPerInstruct();
         */
+        //instructCount++;
+        
+        //cycleCount += op.getCyclesPerInstruct();
+        
         return PC <= endOfText;
     }
     

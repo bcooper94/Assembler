@@ -266,6 +266,7 @@ public class Simulator {
      * Print performacne statistics including number of instructions, Clock cycles and memory references
      */
     public void statsPrint() {
+        cycleCount = pipeLine.getCycleCount();
         System.out.print("\nInstruction Count: " + instructCount +
                          "\nClock cycles: " + cycleCount +
                          "\nMemory References: " + memoryRefs + "\n");

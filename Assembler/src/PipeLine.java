@@ -1,11 +1,13 @@
 public class PipeLine {
     public InstructWrapper[] instructWrappers;
     private Simulator sim;
+    private int cycleCount;
 
     public PipeLine(Simulator sim)
     {
         instructWrappers = new InstructWrapper[5];
         this.sim = sim;
+        cycleCount = 0;
     }
     
     
@@ -18,6 +20,7 @@ public class PipeLine {
           // System.out.print(instructWrappers[idx+1].getInstructCode());
         }
         
+        cycleCount++;
         insert(newInstruct);
     }
     
@@ -47,9 +50,6 @@ public class PipeLine {
             instructWrappers[1].apply();
             instructWrappers[1] = null;
         }
-
-        
-
     }
     
     public void insert(int instructCode) {
@@ -67,5 +67,9 @@ public class PipeLine {
         }
         
         return isEmpty;
+    }
+    
+    public int getCycleCount() {
+       return cycleCount;
     }
 }

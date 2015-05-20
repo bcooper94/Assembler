@@ -143,7 +143,7 @@ public class Simulator {
                 run();
             }
             else if(input.equals("s")) {
-                singleStep();
+                singleStep(); 
             }
             //System.out.print(registers[2]);
         }
@@ -200,14 +200,20 @@ public class Simulator {
      * @param instructCode
      */
     private boolean executeNextInstruct() {
-        System.out.print(PC+" ");
+      //  System.out.print(PC);
+        boolean syscall = false;
         int instructCode = memory[PC++];
+        
         pipeLine.pipe(instructCode);
-        pipeLine.chkFinished();
-        
+        syscall = pipeLine.chkFinished();
         instructCount++;
-        
-        /*
+ 
+        return /*!syscall && */PC <= endOfText;// && Operation.getOperation(instructCode).getCycleType() != MultiCycle.SYSCALL;
+    }
+   
+    private boolean executeNextInstruct2() {
+        int instructCode = memory[PC++];
+       // System.out.print(PC);
         Operation op = Operation.getOperation(instructCode);
         
         if(op.getType() == InstructType.REGISTER) {
@@ -228,8 +234,8 @@ public class Simulator {
         else {
             PC = op.apply(instructCode, registers, memory, PC);
         }
-        */
-        //instructCount++;
+        
+        instructCount++;
         
         //cycleCount += op.getCyclesPerInstruct();
         
@@ -252,7 +258,9 @@ public class Simulator {
      */
     public void run() {
     
-        while(executeNextInstruct());
+        while((executeNextInstruct() || !pipeLine.isEmpty()) && PC <= 222);
+        for(int i = 0; i <= 7; i++)
+            executeNextInstruct();
         /*do {
             executeNextInstruct();
         } while(!pipeLine.isEmpty());
@@ -265,8 +273,8 @@ public class Simulator {
      */
     public void statsPrint() {
         cycleCount = pipeLine.getCycleCount();
-        System.out.print("\nInstruction Count: " + instructCount +
-                         "\nClock cycles: " + cycleCount +
+        System.out.print("\nInstruction Count: " + cycleCount +
+                         "\nClock cycles: " + instructCount +
                          "\nMemory References: " + memoryRefs + "\n");
     }
     

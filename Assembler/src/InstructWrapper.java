@@ -48,6 +48,10 @@ public class InstructWrapper {
         }
         else if (type == InstructType.REGISTER) {
             operation.apply(instructCode, sim.getRegisters());
+            if (operation.getCycleType() == MultiCycle.SYSCALL) {
+                //System.out.print("got to syscall");
+                clearPipe = true;
+            } 
         }
         else if (type == InstructType.IMMEDIATE) {
             if (operation == Operation.BEQ || operation == Operation.BNE) {
@@ -68,5 +72,9 @@ public class InstructWrapper {
         }
         
         return clearPipe;
+    }
+    
+    public Operation getOperation() {
+        return operation;
     }
 }

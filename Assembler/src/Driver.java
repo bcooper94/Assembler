@@ -21,7 +21,7 @@ public class Driver {
         
         try {
             boolean running = true;
-            File file = new File("countbits_benchmark_pipeline.asm");
+            File file = new File("countbits_benchmark.asm");
             Parser parser = new Parser();
 
             //pass 1 = labelsB
@@ -48,7 +48,7 @@ public class Driver {
         }
         catch (Exception e)
         {
-//            System.out.print(e.getMessage());
+            System.out.print(e.getMessage());
         }
         finally {
             sc.close();

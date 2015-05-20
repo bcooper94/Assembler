@@ -17,7 +17,7 @@ public enum Operation {
     },
     
     ORI(0x34000000, InstructType.IMMEDIATE, MultiCycle.REGISTER) {
-        public void apply(int instructCode, int[] regs, int[] memory) {
+        public void apply(int instructCode, int[] regs, int[] memory) { 
             regs[getRTReg(instructCode)] = regs[getRSReg(instructCode)] | getImmediate(instructCode);
         }
     },
@@ -99,7 +99,8 @@ public enum Operation {
     
     BEQ(0x10000000, InstructType.IMMEDIATE, MultiCycle.BRANCH) {
         public int apply(int instructCode, int[] regs, int[] memory, int pc, Simulator sim) {
-            int newPC = pc;
+            int newPC = pc-2;
+            //System.out.print("\nPC after BEQ"+(newPC + getImmediate(instructCode))+"\n");
             if (regs[getRSReg(instructCode)] == regs[getRTReg(instructCode)]) {
                 newPC += getImmediate(instructCode);
             }
@@ -112,14 +113,16 @@ public enum Operation {
     
     BNE(0x14000000, InstructType.IMMEDIATE, MultiCycle.BRANCH) {
         public int apply(int instructCode, int[] regs, int[] memory, int pc, Simulator sim) {
-            int newPC = pc;
+            int newPC = pc-2;
             
             if (regs[getRSReg(instructCode)] != regs[getRTReg(instructCode)]) {
                 newPC += signExtendImmediate((getImmediate(instructCode)));
+               // System.out.print( "\n"+(newPC + signExtendImmediate((getImmediate(instructCode))))+"\n");
             }
             else {
                 sim.branchNotTaken();
             }
+          //  System.out.print("\nPC after BNE: "+newPC);
             return newPC;
         }
     },
@@ -150,14 +153,16 @@ public enum Operation {
     
     JR(0x08, InstructType.REGISTER, MultiCycle.BRANCH) {
         public int apply(int instructCode, int[] regs, int[] memory, int pc) {
+        //System.out.print("PC after JR: "+regs[getRSReg(instructCode)]);
             return regs[getRSReg(instructCode)];
         }
     },
     
     JAL(0x0C000000, InstructType.JUMP, MultiCycle.BRANCH) {
         public int apply(int instructCode, int[] regs, int[] memory, int pc) {
-            regs[31] = pc;
-         //   System.out.print("current PC:"+Simulator.PC_START+"JAL jump:"+signExtendJump(instructCode & 0x03FFFFFF));
+            regs[31] = pc-2;
+          //  System.out.print("\nPC return address: "+regs[31]);
+          //  System.out.print("\nPC after JAL: "+(Simulator.PC_START + signExtendJump(instructCode & 0x03FFFFFF)));
             return Simulator.PC_START + signExtendJump(instructCode & 0x03FFFFFF);
         }
     },

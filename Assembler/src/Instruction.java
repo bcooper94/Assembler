@@ -3,6 +3,10 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
+import javax.swing.ListModel;
+
 /**
  * Represent a single assembly instruction.
  */
@@ -109,8 +113,12 @@ public class Instruction {
     /**
      * Create an instruction from a line of assembly code and its line number.
      */
-    public Instruction(String sourceLine, int lineNum) {
+    public Instruction(String sourceLine, int lineNum, DefaultListModel<String> instructList) {
         instructCode = parseInstruction(sourceLine, lineNum);
+        
+        if (instructList != null) {
+            instructList.addElement("" + instructCode + "        " + sourceLine);
+        }
     }
 
     /**

@@ -22,7 +22,7 @@ public class Driver {
         try {
             boolean running = true;
             File file = new File("countbits_benchmark_pipeline.asm");
-            Parser parser = new Parser();
+            Parser parser = new Parser(null);
 
             //pass 1 = labelsB
             FileReader symRdr = new FileReader(file);

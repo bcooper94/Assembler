@@ -31,7 +31,7 @@ public class InstructionTest {
     
     @Test
     public void testParseInstruction() {
-        Instruction test1 = new Instruction("sw $a0,4($a1)", 1);
+        Instruction test1 = new Instruction("sw $a0,4($a1)", 1, null);
         
         assertEquals(0xACA40004, test1.getinstructCode());
     }

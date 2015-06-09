@@ -3,13 +3,17 @@ import java.io.Reader;
 import java.util.Scanner;
 import java.io.File;
 
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
+
 /**
  * Create a file parser to read through assembly code in two passes.
  */
 public class Parser {
+    private JList<String> instructionList;
 
-   public Parser() {
-       
+   public Parser(JList<String> instructionList) {
+       this.instructionList = instructionList;
    }
    
    /**
@@ -59,6 +63,7 @@ public class Parser {
       String instructionName;
       Instruction currInstruction;
       Program program = new Program();
+      DefaultListModel<String> instructList = new DefaultListModel<String>();
       
 //      try {
          Scanner scanner = new Scanner(rdr);
@@ -67,12 +72,13 @@ public class Parser {
             line = scanner.nextLine();
             String formatted = line.split("#")[0].trim();
             if (Instruction.isInstruction(formatted)) {
-                currInstruction = new Instruction(formatted, lineNum);
+                currInstruction = new Instruction(formatted, lineNum, instructList);
                 program.addInstruction(currInstruction);
                 lineNum++;
             }
          }
          scanner.close();
+         instructionList = new JList<String>(instructList);
 //      }
 //      catch (Exception e)
 //      {
